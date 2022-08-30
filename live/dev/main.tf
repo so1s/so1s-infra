@@ -68,6 +68,13 @@ module "eks" {
 
       instance_types = ["t3.small"]
       capacity_type  = "SPOT"
+
+      create_iam_role = false
+      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+
+      labels = {
+        kind = "public"
+      }
     }
 
     inference = {
@@ -80,6 +87,9 @@ module "eks" {
 
       instance_types = ["t3.small"]
       capacity_type  = "SPOT"
+
+      create_iam_role = false
+      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
 
       taints = {
         kind = {
@@ -104,6 +114,9 @@ module "eks" {
 
       instance_types = ["t3.small"]
       capacity_type  = "SPOT"
+
+      create_iam_role = false
+      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-api"
 
       taints = {
         kind = {
