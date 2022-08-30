@@ -77,7 +77,7 @@ module "eks" {
 
       disk_size = 10
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3a.medium"]
       capacity_type  = "SPOT"
 
       create_iam_role = false
@@ -96,7 +96,7 @@ module "eks" {
 
       disk_size = 30
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3a.medium"]
       capacity_type  = "SPOT"
 
       create_iam_role = false
@@ -123,7 +123,7 @@ module "eks" {
 
       disk_size = 30
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3a.medium"]
       capacity_type  = "SPOT"
 
       create_iam_role = false
