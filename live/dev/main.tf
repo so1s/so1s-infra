@@ -57,6 +57,17 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+
+  node_security_group_additional_rules = {
+    ingress_allow_access_from_control_plane = {
+      type                          = "ingress"
+      protocol                      = "tcp"
+      from_port                     = 9443
+      to_port                       = 9443
+      source_cluster_security_group = true
+      description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
+    }
+  }
   eks_managed_node_groups = {
     public = {
       name         = "public"
@@ -138,3 +149,57 @@ module "eks" {
     Environment = "develop"
   }
 }
+
+# external-dns를 위한 롤 생성 & 노드 그룹을 위한 커스텀 롤 생성
+
+resource "aws_iam_role" "external_dns" {
+  name = "${var.name}-external-dns"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+        {
+            Effect = "Allow"
+            Principal = {
+                Federated = "${module.eks.oidc_provider_arn}"
+            },
+            Action = "sts:AssumeRoleWithWebIdentity"
+            Condition = {
+                StringEquals = {
+                    "${module.eks.oidc_provider}:aud" = "sts.amazonaws.com"
+                }
+            }
+        }
+    ]
+  })
+
+  inline_policy {
+    name = "${var.name}-external-dns-policy"
+
+    policy = jsonencode({
+      Version= "2012-10-17"
+      Statement = [
+          {
+              Effect = "Allow"
+              Action = [
+                  "route53:ChangeResourceRecordSets"
+              ]
+              Resource = [
+                  "arn:aws:route53:::hostedzone/*"
+              ]
+          },
+          {
+              Effect = "Allow"
+              Action = [
+                  "route53:ListHostedZones",
+                  "route53:ListResourceRecordSets"
+              ],
+              Resource = [
+                  "*"
+              ]
+          }
+      ]
+    })
+  }
+}
+
