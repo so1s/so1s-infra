@@ -1,16 +1,3 @@
-provider "aws" {
-    region = "ap-northeast-2"
-}
-
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-      version = "4.28.0"
-    }
-  }
-}
-
 resource "aws_s3_bucket" "remote_state" {
   bucket = "so1s-terraform-remote-state-storage"
   
