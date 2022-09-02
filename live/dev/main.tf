@@ -1,7 +1,6 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "${var.name}-vpc"
   cidr = "10.0.0.0/16"
 
   azs = ["ap-northeast-2a", "ap-northeast-2c", "ap-northeast-2b", "ap-northeast-2d"]
@@ -13,18 +12,20 @@ module "vpc" {
   one_nat_gateway_per_az = false
 
   tags = {
-    Name = "Terraform EKS VPC"
+    Name = "${var.global_name}-cluster-vpc"
     Terraform = "true"
     Environment = "develop"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${var.name}-cluster" = "shared"
+    Name = "${var.global_name}-cluster-private-subnet"
+    "kubernetes.io/cluster/${var.global_name}-so1s-dev" = "shared"
     "kubernetes.io/role/internal-elb"           = "1"
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${var.name}-cluster" = "shared"
+    Name = "${var.global_name}-cluster-public-subnet"
+    "kubernetes.io/cluster/${var.global_name}-so1s-dev" = "shared"
     "kubernetes.io/role/elb"                    = "1"
   }
 }
@@ -33,7 +34,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.0"
 
-  cluster_name    = "${var.name}-so1s-dev"
+  cluster_name    = "${var.global_name}-so1s-dev"
   cluster_version = "1.22" 
 
   cluster_endpoint_private_access = true
@@ -55,33 +56,42 @@ module "eks" {
   }
 
   vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  subnet_ids = concat(module.vpc.private_subnets, module.vpc.public_subnets)
 
+  cluster_security_group_name = "${var.global_name}-cluster-sg"
+
+  node_security_group_name = "${var.global_name}-cluster-nodegroup-sg"
 
   node_security_group_additional_rules = {
-    ingress_allow_access_from_control_plane = {
-      type                          = "ingress"
-      protocol                      = "tcp"
-      from_port                     = 9443
-      to_port                       = 9443
-      source_cluster_security_group = true
-      description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
+    egress_allow_access = {
+      type = "egress"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
     }
   }
+
   eks_managed_node_groups = {
     public = {
-      name         = "public"
+      name         = "${var.global_name}-cluster-public"
       min_size     = 1
       max_size     = 1
       desired_size = 1
 
       disk_size = 10
 
-      instance_types = ["t3a.medium"]
+      instance_types = ["t3a.small"]
       capacity_type  = "SPOT"
+
+      subnet_ids = module.vpc.public_subnets
 
       create_iam_role = false
       iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+
+      network_interfaces = [{
+        associate_public_ip_address = true
+      }]
 
       labels = {
         kind = "public"
@@ -89,7 +99,7 @@ module "eks" {
     }
 
     inference = {
-      name         = "inference"
+      name         = "${var.global_name}-cluster-inference"
       min_size     = 1
       max_size     = 1
       desired_size = 1
@@ -98,6 +108,8 @@ module "eks" {
 
       instance_types = ["t3a.medium"]
       capacity_type  = "SPOT"
+
+      subnet_ids = module.vpc.private_subnets
 
       create_iam_role = false
       iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
@@ -116,15 +128,17 @@ module "eks" {
     }
 
     api = {
-      name         = "api"
-      min_size     = 1
-      max_size     = 1
-      desired_size = 1
+      name         = "${var.global_name}-cluster-api"
+      min_size     = 3
+      max_size     = 3
+      desired_size = 3
 
       disk_size = 30
 
-      instance_types = ["t3a.medium"]
+      instance_types = ["t3.small"]
       capacity_type  = "SPOT"
+
+      subnet_ids = module.vpc.private_subnets
 
       create_iam_role = false
       iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-api"
@@ -144,7 +158,7 @@ module "eks" {
   }
 
   tags = {
-    Name = "Terraform EKS Cluster"
+    Name = "${var.global_name}-so1s-dev"
     Terraform = "true"
     Environment = "develop"
   }
