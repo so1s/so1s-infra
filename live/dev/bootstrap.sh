@@ -49,6 +49,12 @@ echo "Create ArgoCD Project Resource"
 echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml"
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml 
 
+# run root application
+echo -e "\n\n\n"
+echo "Run root-dev.yaml application"
+echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml"
+kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
+
 # create sealed secrets !!!!!! backend namespace setting
 echo -e "\n\n\n"
 echo "Create Sealed Secret"
@@ -60,9 +66,3 @@ kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-sec
 
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml -n backend
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml -n backend
-
-# run root application
-echo -e "\n\n\n"
-echo "Run root-dev.yaml application"
-echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml"
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
