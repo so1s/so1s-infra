@@ -37,10 +37,12 @@ if [ helm != 0 ]; then
 fi
 
 # install argocd 
-echo -e "\n\n\n"
 echo "Install ArgoCD"
 echo "-> helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-dev-values.yaml argo/argo-cd --create-namespace --wait"
 helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-dev-values.yaml argo/argo-cd --create-namespace --wait
+echo "Port Forwarding argocd dashboard. Open the browser on http://localhost:8080"
+kubectl port-forward service/argocd-server -n argocd 8080:443
+echo -e "\n\n\n"
 echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
 # create argocd project resource
