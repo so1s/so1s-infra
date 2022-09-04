@@ -59,9 +59,18 @@ module "eks" {
   subnet_ids = concat(module.vpc.private_subnets, module.vpc.public_subnets)
 
   cluster_security_group_name = "${var.global_name}-cluster-sg"
+  cluster_security_group_additional_rules = {
+    egress_nodes_ephemeral_ports_tcp = {
+      description                = "To node 1025-65535"
+      protocol                   = "tcp"
+      from_port                  = 1025
+      to_port                    = 65535
+      type                       = "egress"
+      source_node_security_group = true
+    }
+  }
 
   node_security_group_name = "${var.global_name}-cluster-nodegroup-sg"
-
   node_security_group_additional_rules = {
     egress_allow_access = {
       type = "egress"
