@@ -3,30 +3,30 @@ module "vpc" {
 
   cidr = "10.0.0.0/16"
 
-  azs = ["ap-northeast-2a", "ap-northeast-2c", "ap-northeast-2b", "ap-northeast-2d"]
+  azs             = ["ap-northeast-2a", "ap-northeast-2c", "ap-northeast-2b", "ap-northeast-2d"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
   one_nat_gateway_per_az = false
 
   tags = {
-    Name = "${var.global_name}-cluster-vpc"
-    Terraform = "true"
+    Name        = "${var.global_name}-cluster-vpc"
+    Terraform   = "true"
     Environment = "develop"
   }
 
   private_subnet_tags = {
-    Name = "${var.global_name}-cluster-private-subnet"
+    Name                                                = "${var.global_name}-cluster-private-subnet"
     "kubernetes.io/cluster/${var.global_name}-so1s-dev" = "shared"
-    "kubernetes.io/role/internal-elb"           = "1"
+    "kubernetes.io/role/internal-elb"                   = "1"
   }
 
   public_subnet_tags = {
-    Name = "${var.global_name}-cluster-public-subnet"
+    Name                                                = "${var.global_name}-cluster-public-subnet"
     "kubernetes.io/cluster/${var.global_name}-so1s-dev" = "shared"
-    "kubernetes.io/role/elb"                    = "1"
+    "kubernetes.io/role/elb"                            = "1"
   }
 }
 
@@ -35,22 +35,22 @@ module "eks" {
   version = "~> 18.0"
 
   cluster_name    = "${var.global_name}-so1s-dev"
-  cluster_version = "1.22" 
+  cluster_version = "1.22"
 
   cluster_endpoint_private_access = true
-  cluster_endpoint_public_access = true
+  cluster_endpoint_public_access  = true
 
   cluster_addons = {
     coredns = {
-      addon_version = "v1.8.7-eksbuild.1"
+      addon_version     = "v1.8.7-eksbuild.1"
       resolve_conflicts = "OVERWRITE"
     }
     kube-proxy = {
-      addon_version = "v1.22.6-eksbuild.1"
+      addon_version     = "v1.22.6-eksbuild.1"
       resolve_conflicts = "OVERWRITE"
     }
     vpc-cni = {
-      addon_version = "v1.11.2-eksbuild.1"
+      addon_version     = "v1.11.2-eksbuild.1"
       resolve_conflicts = "OVERWRITE"
     }
   }
@@ -68,16 +68,37 @@ module "eks" {
       type                       = "egress"
       source_node_security_group = true
     }
+
   }
 
   node_security_group_name = "${var.global_name}-cluster-nodegroup-sg"
   node_security_group_additional_rules = {
-    egress_allow_access = {
-      type = "egress"
+    ingress_self_all = {
+      description = "Node to node all ports/protocols"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "ingress"
+      self        = true
+    }
+
+    ingress_cluster_api_ephemeral_ports_tcp = {
+      description                   = "Cluster API to K8S services running on nodes"
+      protocol                      = "tcp"
+      from_port                     = 1025
+      to_port                       = 65535
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
+
+    egress_all = {
+      description      = "Node all egress"
+      protocol         = "-1"
       from_port        = 0
       to_port          = 0
-      protocol         = "-1"
+      type             = "egress"
       cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     }
   }
 
@@ -96,7 +117,7 @@ module "eks" {
       subnet_ids = module.vpc.public_subnets
 
       create_iam_role = false
-      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
 
       network_interfaces = [{
         associate_public_ip_address = true
@@ -121,7 +142,7 @@ module "eks" {
       subnet_ids = module.vpc.private_subnets
 
       create_iam_role = false
-      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
 
       taints = {
         kind = {
@@ -150,7 +171,7 @@ module "eks" {
       subnet_ids = module.vpc.private_subnets
 
       create_iam_role = false
-      iam_role_arn = "arn:aws:iam::089143290485:role/So1s-data-plane-api"
+      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-api"
 
       taints = {
         kind = {
@@ -167,8 +188,8 @@ module "eks" {
   }
 
   tags = {
-    Name = "${var.global_name}-so1s-dev"
-    Terraform = "true"
+    Name        = "${var.global_name}-so1s-dev"
+    Terraform   = "true"
     Environment = "develop"
   }
 }
