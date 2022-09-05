@@ -16,5 +16,5 @@ kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-sec
 kubectl create secret docker-registry so1s --dry-run=client --from-file=.dockerconfigjson=$SO1S_DEPLOY_REPO_PATH/docker-config.json -o json > $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.json
 kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-secrets --scope cluster-wide -o yaml < $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.json > $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml
 
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml -n backend
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml -n backend
+kubectl apply -f $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml -n backend --wait
+kubectl apply -f $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml -n backend --wait

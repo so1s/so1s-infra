@@ -57,10 +57,10 @@ echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-se
 echo -e "\n\n"
 echo "Create ArgoCD Project Resource"
 echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml"
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml 
+kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml --wait
 
 # run root application
 echo -e "\n\n"
 echo "Run root-dev.yaml application"
 echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml"
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
+kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml --wait

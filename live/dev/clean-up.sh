@@ -6,8 +6,8 @@ else
   echo "Complete Check global_name Variable -> $SO1S_GLOBAL_NAME"
 fi
 
-kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
-kubectl delete -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml
+kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml --wait
+kubectl delete -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml --wait
 
 helm uninstall argocd -n argocd
 
