@@ -1,9 +1,14 @@
+locals {
+  region = "ap-northeast-2"
+}
+
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   cidr = "10.0.0.0/16"
 
-  azs             = ["ap-northeast-2a", "ap-northeast-2c", "ap-northeast-2b", "ap-northeast-2d"]
+  azs             = ["${local.region}a", "${local.region}c", "${local.region}b", "${local.region}d"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
@@ -59,19 +64,7 @@ module "eks" {
   subnet_ids = concat(module.vpc.private_subnets, module.vpc.public_subnets)
 
   cluster_security_group_name = "${var.global_name}-cluster-sg"
-  cluster_security_group_additional_rules = {
-    egress_nodes_ephemeral_ports_tcp = {
-      description                = "To node 1025-65535"
-      protocol                   = "tcp"
-      from_port                  = 1025
-      to_port                    = 65535
-      type                       = "egress"
-      source_node_security_group = true
-    }
-
-  }
-
-  node_security_group_name = "${var.global_name}-cluster-nodegroup-sg"
+  node_security_group_name    = "${var.global_name}-cluster-nodegroup-sg"
   node_security_group_additional_rules = {
     ingress_self_all = {
       description = "Node to node all ports/protocols"
@@ -81,16 +74,6 @@ module "eks" {
       type        = "ingress"
       self        = true
     }
-
-    ingress_cluster_api_ephemeral_ports_tcp = {
-      description                   = "Cluster API to K8S services running on nodes"
-      protocol                      = "tcp"
-      from_port                     = 1025
-      to_port                       = 65535
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
-
     egress_all = {
       description      = "Node all egress"
       protocol         = "-1"
@@ -118,10 +101,6 @@ module "eks" {
 
       create_iam_role = false
       iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
-
-      network_interfaces = [{
-        associate_public_ip_address = true
-      }]
 
       labels = {
         kind = "public"
