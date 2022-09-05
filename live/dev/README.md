@@ -9,6 +9,7 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 3. KubeSeal 0.18.1
 4. helm 3.8.2
 5. helm repo argo (argo-cd 5.4.1)
+6. aws cli 혹은 aws 시크릿 키를 export하기 -> export AWS_ACCESS_KEY_ID="anaccesskey", export AWS_SECRET_ACCESS_KEY="asecretkey"
 
 하나라도 설치가 안되어 있을 시 쉘 스크립트가 정상동작을 안하니 유의해주시길 바랍니다.
 
