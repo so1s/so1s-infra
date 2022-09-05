@@ -29,6 +29,7 @@ kubectl port-forward service/argocd-server -n argocd 8080:443
 
 
 # 종료시
+kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
 helm uninstall argocd -n argocd
 terraform destroy
 
