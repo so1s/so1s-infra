@@ -35,6 +35,7 @@ echo -e "\n\n"
 echo "Update KubeConfig"
 echo "-> aws eks update-kubeconfig --region "ap-northeast-2" --name "$SO1S_GLOBAL_NAME-so1s-dev" --alias $SO1S_GLOBAL_NAME"
 aws eks update-kubeconfig --region "ap-northeast-2" --name "$SO1S_GLOBAL_NAME-so1s-dev" --alias $SO1S_GLOBAL_NAME
+kubectl config use-context $SO1S_GLOBAL_NAME
 
 echo -e "\n\n"
 
