@@ -14,6 +14,8 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
 ```bash
 chmod 777 ./bootstrap.sh
+chmod 777 ./bootstrap-sealed-secrets.sh
+chmod 777 ./clean-up.sh
 
 export SO1S_GLOBAL_NAME=<GLOBAL_NAME>
 
@@ -29,9 +31,7 @@ kubectl port-forward service/argocd-server -n argocd 8080:443
 
 
 # 종료시
-kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
-helm uninstall argocd -n argocd
-terraform destroy
+./clean-up.sh
 
 ```
 
