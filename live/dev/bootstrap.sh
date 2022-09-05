@@ -64,15 +64,3 @@ echo -e "\n\n"
 echo "Run root-dev.yaml application"
 echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml"
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/root-dev.yaml
-
-# create sealed secrets !!!!!! backend namespace setting
-echo -e "\n\n"
-echo "Create Sealed Secret"
-kubectl create secret generic application-secret --dry-run=client --from-env-file=$SO1S_DEPLOY_REPO_PATH/secrets.env -o json > $SO1S_DEPLOY_REPO_PATH/secrets.json
-kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-secrets --scope cluster-wide -o yaml < $SO1S_DEPLOY_REPO_PATH/secrets.json > $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml
-
-kubectl create secret docker-registry so1s --dry-run=client --from-file=.dockerconfigjson=$SO1S_DEPLOY_REPO_PATH/docker-config.json -o json > $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.json
-kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-secrets --scope cluster-wide -o yaml < $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.json > $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml
-
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml -n backend
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml -n backend
