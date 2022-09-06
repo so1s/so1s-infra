@@ -18,3 +18,6 @@ kubeseal --controller-name so1s-sealed-secrets --controller-namespace sealed-sec
 
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml -n backend --wait
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml -n backend --wait
+
+rm -rf $SO1S_DEPLOY_REPO_PATH/docker-pull-secret.yaml
+rm -rf $SO1S_DEPLOY_REPO_PATH/sealed-secret.yaml
