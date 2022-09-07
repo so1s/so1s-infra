@@ -66,24 +66,25 @@ address=/*.so1s.io/127.0.0.1
 # 1 - dig 사용
 
 # dig test-www.so1s.io
-; <<>> DiG 9.18.1-1ubuntu1.1-Ubuntu <<>> test-www.so1s.io
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 21457
-;; flags: qr aa rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+# 
+# ; <<>> DiG 9.18.1-1ubuntu1.1-Ubuntu <<>> test-www.so1s.io
+# ;; global options: +cmd
+# ;; Got answer:
+# ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 21457
+# ;; flags: qr aa rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 65494
-;; QUESTION SECTION:
-;test-www.so1s.io.              IN      A
+# ;; OPT PSEUDOSECTION:
+# ; EDNS: version: 0, flags:; udp: 65494
+# ;; QUESTION SECTION:
+# ;test-www.so1s.io.              IN      A
 
-;; ANSWER SECTION:
-test-www.so1s.io.       0       IN      A       127.0.0.1
+# ;; ANSWER SECTION:
+# test-www.so1s.io.       0       IN      A       127.0.0.1
 
-;; Query time: 0 msec
-;; SERVER: 127.0.0.53#53(127.0.0.53) (UDP)
-;; WHEN: Wed Sep 07 20:32:27 KST 2022
-;; MSG SIZE  rcvd: 61
+# ;; Query time: 0 msec
+# ;; SERVER: 127.0.0.53#53(127.0.0.53) (UDP)
+# ;; WHEN: Wed Sep 07 20:32:27 KST 2022
+# ;; MSG SIZE  rcvd: 61
 
 # 2 - 브라우저 사용
 
