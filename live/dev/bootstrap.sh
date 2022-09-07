@@ -48,6 +48,7 @@ fi
 # install argocd 
 echo "Install ArgoCD"
 echo "-> helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-dev-values.yaml argo/argo-cd --create-namespace --wait"
+helm repo add argo https://argoproj.github.io/argo-helm
 helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-dev-values.yaml argo/argo-cd --create-namespace --wait
 
 echo -e "\n\n"
