@@ -50,6 +50,8 @@ kubectl port-forward -n istio-system svc/istio 9443:80
 
 # https://serverfault.com/a/569936
 
+brew install dnsmasq
+
 # vim /etc/resolv.conf
 nameserver 127.0.0.1
 
@@ -57,6 +59,9 @@ nameserver 127.0.0.1
 listen-address=127.0.0.1
 address=/so1s.io/127.0.0.1
 address=/*.so1s.io/127.0.0.1
+
+sudo brew services stop dnsmasq
+sudo brew services start dnsmasq
 
 
 # =====================
