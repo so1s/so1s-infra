@@ -187,6 +187,35 @@ module "eks" {
         kind = "api"
       }
     }
+    
+    database = {
+      name         = "${var.global_name}-cluster-database"
+      min_size     = 1
+      max_size     = 1
+      desired_size = 1
+
+      disk_size = 50
+
+      instance_types = ["t3.small"]
+      capacity_type  = "SPOT"
+
+      subnet_ids = module.vpc.private_subnets
+
+      create_iam_role = false
+      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-database"
+
+      taints = {
+        kind = {
+          key    = "kind"
+          effect = "NO_SCHEDULE"
+          value  = "database"
+        }
+      }
+
+      labels = {
+        kind = "database"
+      }
+    }
   }
 
   tags = {
