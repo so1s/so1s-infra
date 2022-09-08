@@ -1,4 +1,4 @@
-## SO1S 개발 환경 사용법 - v0.1.0
+## SO1S 개발 환경 사용법 - v0.2.1
 
 bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
@@ -16,8 +16,8 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 ```bash
 # =====================
 # 사전 환경 작업
-chmod 777 ./bootstrap.sh
-chmod 777 ./clean-up.sh
+chmod +x ./bootstrap.sh
+chmod +x ./clean-up.sh
 
 export SO1S_GLOBAL_NAME=<GLOBAL_NAME>
 
@@ -28,6 +28,9 @@ export SO1S_DEPLOY_REPO_PATH=<DEPLOY_REPO_PATH>
 
 # ArgoCD UI 포트포워딩
 kubectl port-forward service/argocd-server -n argocd 8080:443
+
+# ArgoCD Sealed-Secret 어플리케이션이 정상적으로 동작한 다음 실행
+./bootstrap-sealed-secret.sh
 
 # Istio Gateway 포트포워딩
 kubectl port-forward -n istio-system svc/istio 9443:80
@@ -40,7 +43,7 @@ kubectl port-forward -n istio-system svc/istio 9443:80
 
 # 1 - /etc/hosts 사용
 
-# vim /etc/hosts
+# sudo vim /etc/hosts
 # 사용하고자 하는 서브도메인을 작성해 주세요.
 # ...
 127.0.0.1 test-www.so1s.io
