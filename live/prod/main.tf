@@ -141,8 +141,13 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = false
-      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+      create_iam_role = true
+      iam_role_name   = "So1s-dataplane-inference"
+      iam_role_additional_policies = [
+        "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+        "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
+        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
+      ]
 
       taints = {
         kind = {
@@ -169,8 +174,12 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = false
-      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-api"
+      create_iam_role = true
+      iam_role_name   = "So1s-dataplane-api"
+      iam_role_additional_policies = [
+        "arn:aws:iam::aws:policy/PowerUserAccess",
+        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
+      ]
 
       taints = {
         kind = {
@@ -197,8 +206,12 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = false
-      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-database"
+      create_iam_role = true
+      iam_role_name   = "So1s-dataplane-database"
+      iam_role_additional_policies = [
+        "arn:aws:iam::aws:policy/PowerUserAccess",
+        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
+      ]
 
       taints = {
         kind = {
@@ -219,4 +232,31 @@ module "eks" {
     Terraform   = "true"
     Environment = "production"
   }
+}
+
+data "terraform_remote_state" "global" {
+  backend = "s3"
+
+  config = {
+    bucket = "so1s-terraform-remote-state-storage"
+    key    = "live/global/terraform.tfstate"
+  }
+
+}
+
+resource "aws_iam_openid_connect_provider" "this" {
+  url            = replace(module.eks.cluster_oidc_issuer_url, "https://", "")
+  client_id_list = ["sts.amazonaws.com"]
+}
+
+resource "aws_iam_role" "external_dns" {
+  name               = "external_dns"
+  assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = aws_iam_openid_connect_provider.this.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.this.url, "https://", "") })
+
+  depends_on = [aws_iam_openid_connect_provider.this]
+}
+
+resource "aws_iam_role_policy_attachment" "external_dns_attach" {
+  role       = aws_iam_role.external_dns.name
+  policy_arn = data.terraform_remote_state.global.outputs.iam_policy_external_dns_arn
 }

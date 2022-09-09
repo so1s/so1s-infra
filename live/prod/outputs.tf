@@ -25,3 +25,8 @@ output "eks_managed_node_groups_autoscaling_group_names" {
   description = "List of the autoscaling group names created by EKS managed node groups"
   value       = module.eks.eks_managed_node_groups_autoscaling_group_names
 }
+
+output "external_dns_role_arn" {
+  description = "External DNS ARN for external-dns chart values.yaml"
+  value       = aws_iam_role.external_dns.arn
+}
