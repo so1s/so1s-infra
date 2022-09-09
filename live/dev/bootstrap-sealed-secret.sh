@@ -16,5 +16,5 @@ kubectl rollout restart deployment -n sealed-secrets so1s-sealed-secrets
 # IMAGE PULL ERROR난 backend deployment의 Replicas를 지우고 다시 생성한다.
 echo "Wait for Sealed-Secret to be created"
 sleep 10
-REPLICA_NAME=`kubectl get replicasets.app -n backend | grep so1s-dev | cut -d ' ' -f1`
-kubectl delete replicasets.app $REPLICA_NAME -n backend
+REPLICA_NAME=`kubectl get deployment -n backend | grep so1s | cut -d ' ' -f1`
+kubectl rollout restart deployment -n backend $REPLICA_NAME 
