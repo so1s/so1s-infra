@@ -240,20 +240,16 @@ data "terraform_remote_state" "global" {
   config = {
     bucket = "so1s-terraform-remote-state-storage"
     key    = "live/global/terraform.tfstate"
+    region = "ap-northeast-2"
   }
 
 }
 
-resource "aws_iam_openid_connect_provider" "this" {
-  url            = replace(module.eks.cluster_oidc_issuer_url, "https://", "")
-  client_id_list = ["sts.amazonaws.com"]
-}
-
 resource "aws_iam_role" "external_dns" {
   name               = "external_dns"
-  assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = aws_iam_openid_connect_provider.this.arn, OIDC_URL = replace(aws_iam_openid_connect_provider.this.url, "https://", "") })
+  assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = module.eks.oidc_provider_arn, OIDC_URL = replace(module.eks.cluster_oidc_issuer_url, "https://", "") })
 
-  depends_on = [aws_iam_openid_connect_provider.this]
+  depends_on = [module.eks.oidc_provider]
 }
 
 resource "aws_iam_role_policy_attachment" "external_dns_attach" {
