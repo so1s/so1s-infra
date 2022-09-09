@@ -115,10 +115,9 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      disk_size = 10
+      disk_size = 30
 
-      instance_types = ["t3a.small"]
-      capacity_type  = "SPOT"
+      instance_types = ["t3a.medium"]
 
       subnet_ids = module.vpc.public_subnets
 
@@ -133,13 +132,12 @@ module "eks" {
     inference = {
       name         = "${var.global_name}-cluster-inference"
       min_size     = 1
-      max_size     = 1
-      desired_size = 1
+      max_size     = 3
+      desired_size = 2
 
       disk_size = 30
 
-      instance_types = ["t3a.medium"]
-      capacity_type  = "SPOT"
+      instance_types = ["t3a.large"]
 
       subnet_ids = module.vpc.private_subnets
 
@@ -161,14 +159,13 @@ module "eks" {
 
     api = {
       name         = "${var.global_name}-cluster-api"
-      min_size     = 3
-      max_size     = 3
-      desired_size = 3
+      min_size     = 2
+      max_size     = 4
+      desired_size = 2
 
-      disk_size = 30
+      disk_size = 100
 
-      instance_types = ["t3.small"]
-      capacity_type  = "SPOT"
+      instance_types = ["t3a.large"]
 
       subnet_ids = module.vpc.private_subnets
 
@@ -197,7 +194,6 @@ module "eks" {
       disk_size = 50
 
       instance_types = ["t3.small"]
-      capacity_type  = "SPOT"
 
       subnet_ids = module.vpc.private_subnets
 
