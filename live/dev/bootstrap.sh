@@ -60,16 +60,6 @@ echo "Create ArgoCD Project Resource"
 echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml"
 kubectl apply -f $SO1S_DEPLOY_REPO_PATH/project/project-dev.yaml --wait
 
-echo -e "\n\n"
-echo "Create Sealed Secret Application"
-echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/apps/dev/app-sealed-secrets.yaml"
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/apps/dev/app-sealed-secrets.yaml --wait
-
-echo -e "\n\n"
-echo "Inject Sealed Secret Certificate"
-echo "-> kubectl apply -f $SO1S_DEPLOY_REPO_PATH/cert.yaml"
-kubectl apply -f $SO1S_DEPLOY_REPO_PATH/cert.yaml --wait
-
 # run root application
 echo -e "\n\n"
 echo "Run root-dev.yaml application"
