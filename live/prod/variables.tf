@@ -3,3 +3,20 @@ variable "global_name" {
   type        = string
   default     = "prod"
 }
+variable "public_instance_types" {
+  description = "This type will use public node that use eks"
+  type        = list(string)
+  default     = ["t3a.medium"]
+}
+
+variable "inference_instance_types" {
+  description = "This type will use inference node that use eks"
+  type        = list(string)
+  default     = ["t3a.large"]
+}
+
+variable "api_instance_types" {
+  description = "This type will use api node that use eks"
+  type        = list(string)
+  default     = ["t3a.large"]
+}
