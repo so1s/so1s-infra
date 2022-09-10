@@ -1,7 +1,17 @@
 locals {
-  region = "ap-northeast-2"
+  region                             = "ap-northeast-2"
+  eks_nodegroup_default_iam_policies = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
+  eks_nodegroup_public_iam_policies  = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
+  eks_nodegroup_api_iam_policies     = ["arn:aws:iam::aws:policy/PowerUserAccess"]
+  node_names                         = ["inference", "api", "database", "public"]
+  default_taint = {
+    key    = "kind"
+    effect = "NO_SCHEDULE"
+  }
+  taints = [
+    for node_name in slice(local.node_names, 0, length(local.node_names) - 1) : merge(local.default_taint, { value = node_name })
+  ]
 }
-
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -110,7 +120,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     public = {
-      name         = "${var.global_name}-cluster-public"
+      name         = "${var.global_name}-cluster-${local.node_names[3]}"
       min_size     = 1
       max_size     = 1
       desired_size = 1
@@ -121,16 +131,17 @@ module "eks" {
 
       subnet_ids = module.vpc.public_subnets
 
-      create_iam_role = false
-      iam_role_arn    = "arn:aws:iam::089143290485:role/So1s-data-plane-inference"
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
+      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_public_iam_policies)
 
       labels = {
-        kind = "public"
+        kind = local.node_names[3]
       }
     }
 
     inference = {
-      name         = "${var.global_name}-cluster-inference"
+      name         = "${var.global_name}-cluster-${local.node_names[0]}"
       min_size     = 1
       max_size     = 3
       desired_size = 2
@@ -141,29 +152,21 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = true
-      iam_role_name   = "So1s-dataplane-inference"
-      iam_role_additional_policies = [
-        "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-        "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
-        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
-      ]
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[0]}"
+      iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
 
       taints = {
-        kind = {
-          key    = "kind"
-          effect = "NO_SCHEDULE"
-          value  = "inference"
-        }
+        kind = local.taints[0]
       }
 
       labels = {
-        kind = "inference"
+        kind = local.node_names[0]
       }
     }
 
     api = {
-      name         = "${var.global_name}-cluster-api"
+      name         = "${var.global_name}-cluster-${local.node_names[1]}"
       min_size     = 2
       max_size     = 4
       desired_size = 2
@@ -174,28 +177,21 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = true
-      iam_role_name   = "So1s-dataplane-api"
-      iam_role_additional_policies = [
-        "arn:aws:iam::aws:policy/PowerUserAccess",
-        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
-      ]
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[1]}"
+      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_api_iam_policies)
 
       taints = {
-        kind = {
-          key    = "kind"
-          effect = "NO_SCHEDULE"
-          value  = "api"
-        }
+        kind = local.taints[1]
       }
 
       labels = {
-        kind = "api"
+        kind = local.node_names[1]
       }
     }
 
     database = {
-      name         = "${var.global_name}-cluster-database"
+      name         = "${var.global_name}-cluster-${local.node_names[2]}"
       min_size     = 1
       max_size     = 1
       desired_size = 1
@@ -206,23 +202,16 @@ module "eks" {
 
       subnet_ids = module.vpc.private_subnets
 
-      create_iam_role = true
-      iam_role_name   = "So1s-dataplane-database"
-      iam_role_additional_policies = [
-        "arn:aws:iam::aws:policy/PowerUserAccess",
-        data.terraform_remote_state.global.outputs.iam_policy_alb_arn
-      ]
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[2]}"
+      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_api_iam_policies)
 
       taints = {
-        kind = {
-          key    = "kind"
-          effect = "NO_SCHEDULE"
-          value  = "database"
-        }
+        kind = local.taints[2]
       }
 
       labels = {
-        kind = "database"
+        kind = local.node_names[2]
       }
     }
   }
