@@ -22,6 +22,14 @@ echo -e "\n"
 echo "Terraform Initialize"
 echo "-> terraform apply"
 terraform apply
+RESULT=`terraform apply`
+CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d ' ' -f3`
+echo $CLUSTER_NAME
+VPC_ID=`echo $RESULT | grep vpc_id | cut -d ' ' -f3`
+echo $VPC_ID
+ROLE_ARN=`echo $RESULT | grep external_dns_role_arn | cut -d ' ' -f3`
+echo $ROLE_ARN
+
 
 echo -e "\n\n"
 echo "Update KubeConfig"
@@ -33,9 +41,17 @@ echo -e "\n\n"
 
 # helm existing check
 if [ helm != 0 ]; then
-  echo "Your Helm Version -> " `helm version --short | head -n 1`"
+  echo "Your Helm Version -> " `helm version --short | head -n 1`
   echo -e "\n"
 fi
+
+# install alb chart
+echo "Install ALB"
+helm install alb -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/aws-load-balancer-controller/dev-values.yaml eks/aws-load-balancer-controller --create-namespace --wait --set clusterName=$CLUSTER_NAME --set vpcId=$VPC_ID
+
+# install external-dns chart
+echo "Install external-dns"
+helm install external-dns -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns/dev-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns --create-namespace --wait --set serviceAccount.roleArn=$ROLE_ARN
 
 # install argocd 
 echo "Install ArgoCD"
