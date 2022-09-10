@@ -23,9 +23,9 @@ echo "Terraform Initialize"
 echo "-> terraform apply"
 terraform apply
 RESULT=`terraform apply`
-CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d ' ' -f3`
+CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d '"' -f2`
 echo $CLUSTER_NAME
-VPC_ID=`echo $RESULT | grep vpc_id | cut -d ' ' -f3`
+VPC_ID=`echo $RESULT | grep vpc_id | cut -d '"' -f2`
 echo $VPC_ID
 ROLE_ARN=`echo $RESULT | grep external_dns_role_arn | cut -d ' ' -f3`
 echo $ROLE_ARN

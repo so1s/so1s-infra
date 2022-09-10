@@ -235,7 +235,7 @@ data "terraform_remote_state" "global" {
 }
 
 resource "aws_iam_role" "external_dns" {
-  name               = "external_dns"
+  name               = "external_dns2"
   assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = module.eks.oidc_provider_arn, OIDC_URL = replace(module.eks.cluster_oidc_issuer_url, "https://", "") })
 
   depends_on = [module.eks.oidc_provider]
