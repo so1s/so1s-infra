@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket         = "so1s-terraform-remote-state-storage"
     region         = "ap-northeast-2"
-    key            = "live/global/terraform.tfstate"
+    key            = "live/prod/terraform.tfstate"
     dynamodb_table = "remote_state_locking"
     encrypt        = true
   }

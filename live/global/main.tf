@@ -1,49 +1,21 @@
-resource "aws_s3_bucket" "remote_state" {
-  bucket = "so1s-terraform-remote-state-storage"
-  
-  lifecycle {
-    prevent_destroy = true
-  }
- 
+resource "aws_iam_policy" "alb" {
+  name        = "alb-eks"
+  description = "use alb in eks"
+
+  policy = file("policies/alb.json")
   tags = {
-    Name = "Terraform State Storage"
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "production"
   }
 }
 
+resource "aws_iam_policy" "external_dns" {
+  name        = "external-dns"
+  description = "setting for external dns"
 
-resource "aws_s3_bucket_versioning" "remote_state" {
-  bucket = aws_s3_bucket.remote_state.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "remote_state" {
-  bucket = aws_s3_bucket.remote_state.id
-  
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-resource "aws_dynamodb_table" "remote_state_locking" {
-  name = "remote_state_locking"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key = "LockID"
-  
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
+  policy = file("policies/external-dns.json")
   tags = {
-    Name = "Terraform State Locking DB"
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "production"
   }
 }

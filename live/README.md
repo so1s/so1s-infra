@@ -1,4 +1,4 @@
-## SO1S 개발 환경 사용법 - v0.2.1
+## SO1S 개발 환경 사용법 - v0.3.0
 
 bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
@@ -13,16 +13,21 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
 하나라도 설치가 안되어 있을 시 쉘 스크립트가 정상동작을 안하니 유의해주시길 바랍니다.
 
+### 공통 설정
+
 ```bash
-# =====================
+
 # 사전 환경 작업
 chmod +x ./bootstrap.sh
+chmod +x ./bootstrap-sealed-secret.sh
 chmod +x ./clean-up.sh
 
-export SO1S_GLOBAL_NAME=<GLOBAL_NAME>
+```
 
-export SO1S_DEPLOY_REPO_PATH=<DEPLOY_REPO_PATH>
+### Dev 환경 실행
 
+```bash
+# =====================
 # Terraform 프로비저닝
 ./bootstrap.sh
 
@@ -105,5 +110,22 @@ http://test-www.so1s.io:9443
 ./clean-up.sh
 
 ```
+
+
+### Prod 환경 실행
+
+```bash
+
+# Terraform 프로비저닝
+./bootstrap.sh
+
+# ArgoCD Sealed-Secret 어플리케이션이 정상적으로 동작한 다음 실행
+./bootstrap-sealed-secret.sh
+
+# 클러스터 삭제
+./clean-up.sh
+
+```
+
 
 각종 이슈 신고는 지라로 받겠습니다.
