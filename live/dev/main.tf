@@ -194,9 +194,9 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      disk_size = 50
+      disk_size = 30
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3a.nano"]
       capacity_type  = "SPOT"
 
       subnet_ids = module.vpc.private_subnets
