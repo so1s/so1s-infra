@@ -9,7 +9,7 @@ done
 
 echo -e "\n"
 
-SO1S_REGEX="^([.]{0,2}\/)*([A-z0-9-_+]+\/)*([A-z0-9-_]+)$"
+SO1S_REGEX="^(.+)\/([^\/]+)$"
 while [[ ! $SO1S_DEPLOY_REPO_PATH =~ $SO1S_REGEX ]]
 do
   echo -e "Deploy Repository 경로를 입력 해주세요."
@@ -23,11 +23,15 @@ if [ $SO1S_ENV_NUMBER -eq 2 ]; then
   read SO1S_GLOBAL_NAME
   # 추후 values.yaml 환경 지정을 위한 설정
   SO1S_ENV_NAME="dev"
+  SO1S_ENV_PATH="./dev"
 elif [ $SO1S_ENV_NUMBER -eq 1 ]; then
   SO1S_GLOBAL_NAME="prod"
   # 추후 values.yaml 환경 지정을 위한 설정
   SO1S_ENV_NAME="prod"
+  SO1S_ENV_PATH="./prod"
 fi
+
+cd $SO1S_ENV_PATH
 
 # Check Terraform Version
 if [ terraform != 0 ]; then
@@ -37,6 +41,7 @@ fi
 echo -e "\n"
 echo "Terraform Initialize"
 if [ $SO1S_ENV_NUMBER -eq 1 ]; then
+  echo "terraform init"
   terraform init
 elif [ $SO1S_ENV_NUMBER -eq 2 ]; then
   echo "-> terraform init -backend-config=key=live/dev/$SO1S_GLOBAL_NAME"
@@ -75,10 +80,12 @@ if [ $SO1S_ENV_NUMBER -eq 1 ]; then
   # install alb chart
   echo -e "\n"
   echo "Install ALB"
+  echo "-> helm install alb -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/aws-load-balancer-controller/dev-values.yaml eks/aws-load-balancer-controller --create-namespace --wait --set clusterName=$CLUSTER_NAME --set vpcId=$VPC_ID"
   helm install alb -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/aws-load-balancer-controller/dev-values.yaml eks/aws-load-balancer-controller --create-namespace --wait --set clusterName=$CLUSTER_NAME --set vpcId=$VPC_ID
 
   # install external-dns chart
   echo "Install external-dns"
+  echo "-> helm install external-dns -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns/dev-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns --create-namespace --wait --set serviceAccount.roleArn=$ROLE_ARN"
   helm install external-dns -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns/dev-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns --create-namespace --wait --set serviceAccount.roleArn=$ROLE_ARN
 fi
 
