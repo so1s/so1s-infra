@@ -55,11 +55,11 @@ terraform apply -var="global_name=$SO1S_GLOBAL_NAME"
 
 # Using for ALB, External DNS Chart
 RESULT=`terraform apply -var="global_name=$SO1S_GLOBAL_NAME"`
-CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d ' ' -f3`
+CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d '"' -f2`
 echo $CLUSTER_NAME
-VPC_ID=`echo $RESULT | grep vpc_id | cut -d ' ' -f3`
+VPC_ID=`echo $RESULT | grep vpc_id | cut -d '"' -f2`
 echo $VPC_ID
-ROLE_ARN=`echo $RESULT | grep external_dns_role_arn | cut -d ' ' -f3`
+ROLE_ARN=`echo $RESULT | grep external_dns_role_arn | cut -d '"' -f2`
 echo $ROLE_ARN
 
 [[ $SO1S_ENV_NUMBER = 1 ]] && SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s" || SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s-dev"
