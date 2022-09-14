@@ -38,7 +38,9 @@ kubectl delete -f $SO1S_DEPLOY_REPO_PATH/project/project-$SO1S_ENV_NAME.yaml --w
 
 helm uninstall argocd -n argocd --wait
 
-helm uninstall external-dns -n kube-system --wait
-helm uninstall alb -n kube-system --wait 
+if [ $SO1S_ENV_NUMBER -eq 1 ]; then
+  helm uninstall external-dns -n kube-system --wait
+  helm uninstall alb -n kube-system --wait 
+fi
 
 terraform destroy -var="global_name=$SO1S_GLOBAL_NAME"
