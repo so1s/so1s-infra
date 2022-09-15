@@ -198,7 +198,7 @@ module "eks" {
 
       disk_size = 50
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.nano"]
 
       subnet_ids = module.vpc.private_subnets
 
