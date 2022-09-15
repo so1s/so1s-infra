@@ -54,13 +54,13 @@ echo "-> terraform apply -var=global_name=$SO1S_GLOBAL_NAME"
 terraform apply -var="global_name=$SO1S_GLOBAL_NAME"
 
 # Using for ALB, External DNS Chart
-RESULT=`terraform apply -var="global_name=$SO1S_GLOBAL_NAME"`
-CLUSTER_NAME=`echo $RESULT | grep cluster_id | cut -d '"' -f2`
+RESULT=`terraform output`
+CLUSTER_NAME=`echo -e $RESULT | grep cluster_id | cut -d '"' -f2`
 echo $CLUSTER_NAME
-VPC_ID=`echo $RESULT | grep vpc_id | cut -d '"' -f2`
-echo $VPC_ID
-ROLE_ARN=`echo $RESULT | grep external_dns_role_arn | cut -d '"' -f2`
+ROLE_ARN=`echo -e $RESULT | grep external_dns_role_arn | cut -d '"' -f4`
 echo $ROLE_ARN
+VPC_ID=`echo -e $RESULT | grep vpc_id | cut -d '"' -f6`
+echo $VPC_ID
 
 [[ $SO1S_ENV_NUMBER = 1 ]] && SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s" || SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s-dev"
 
@@ -89,7 +89,7 @@ if [ $SO1S_ENV_NUMBER -eq 1 ]; then
   helm install external-dns -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns/dev-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/public/external-dns --create-namespace --wait --set serviceAccount.roleArn=$ROLE_ARN
 fi
 
-# install argocd 
+install argocd 
 echo -e "\n"
 echo "Install ArgoCD"
 echo "-> helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait"
