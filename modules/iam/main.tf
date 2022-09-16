@@ -1,6 +1,6 @@
 resource "aws_iam_role" "external_dns" {
   name               = "external_dns"
-  assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = var.cluster_oidc_provider_arn, OIDC_URL = replace(var.cluster_oidc_issuer_url, "https://", "") })
+  assume_role_policy = templatefile("${path.module}/oidc-policy.json", { OIDC_ARN = var.cluster_oidc_provider_arn, OIDC_URL = replace(var.cluster_oidc_issuer_url, "https://", "") })
   depends_on         = [var.cluster_oidc_provider]
 }
 
