@@ -19,13 +19,13 @@ module "vpc" {
 
   private_subnet_tags = {
     Name                                                                        = "${var.global_name}-cluster-private-subnet"
-    "kubernetes.io/cluster/${var.global_name}-so1s-${var.is_prod ? "" : "dev"}" = "shared"
+    "kubernetes.io/cluster/${var.global_name}-so1s${var.is_prod ? "" : "-dev"}" = "shared"
     "kubernetes.io/role/internal-elb"                                           = "1"
   }
 
   public_subnet_tags = {
     Name                                                                        = "${var.global_name}-cluster-public-subnet"
-    "kubernetes.io/cluster/${var.global_name}-so1s-${var.is_prod ? "" : "dev"}" = "shared"
+    "kubernetes.io/cluster/${var.global_name}-so1s${var.is_prod ? "" : "-dev"}" = "shared"
     "kubernetes.io/role/elb"                                                    = "1"
   }
 }
