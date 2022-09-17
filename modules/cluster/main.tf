@@ -1,4 +1,3 @@
-
 locals {
   region                             = "ap-northeast-2"
   eks_nodegroup_default_iam_policies = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
@@ -14,43 +13,12 @@ locals {
   ]
 }
 
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-
-  cidr = "10.0.0.0/16"
-
-  azs             = ["${local.region}a", "${local.region}c", "${local.region}b", "${local.region}d"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
-
-  enable_nat_gateway     = true
-  single_nat_gateway     = true
-  one_nat_gateway_per_az = false
-
-  tags = {
-    Name        = "${var.global_name}-cluster-vpc"
-    Terraform   = "true"
-    Environment = var.is_prod ? "production" : "develop"
-  }
-
-  private_subnet_tags = {
-    Name                                                                        = "${var.global_name}-cluster-private-subnet"
-    "kubernetes.io/cluster/${var.global_name}-so1s-${var.is_prod ? "" : "dev"}" = "shared"
-    "kubernetes.io/role/internal-elb"                                           = "1"
-  }
-
-  public_subnet_tags = {
-    Name                                                                        = "${var.global_name}-cluster-public-subnet"
-    "kubernetes.io/cluster/${var.global_name}-so1s-${var.is_prod ? "" : "dev"}" = "shared"
-    "kubernetes.io/role/elb"                                                    = "1"
-  }
-}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 18.0"
 
-  cluster_name    = "${var.global_name}-so1s-${var.is_prod ? "" : "dev"}"
+  cluster_name    = "${var.global_name}-so1s${var.is_prod ? "" : "-dev"}"
   cluster_version = "1.22"
 
   cluster_endpoint_private_access = true
@@ -71,8 +39,8 @@ module "eks" {
     }
   }
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = concat(module.vpc.private_subnets, module.vpc.public_subnets)
+  vpc_id     = var.vpc_id
+  subnet_ids = concat(var.vpc_private_subnets, var.vpc_public_subnets)
 
   cluster_security_group_name = "${var.global_name}-cluster-sg"
 
@@ -131,7 +99,7 @@ module "eks" {
       instance_types = var.public_node_instance_types
       capacity_type  = var.public_node_spot ? "SPOT" : "ON_DEMAND"
 
-      subnet_ids = module.vpc.public_subnets
+      subnet_ids = var.vpc_public_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
@@ -153,7 +121,7 @@ module "eks" {
       instance_types = var.inference_node_instance_types
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
-      subnet_ids = module.vpc.private_subnets
+      subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[0]}"
@@ -179,7 +147,7 @@ module "eks" {
       instance_types = var.api_node_instance_types
       capacity_type  = var.api_node_spot ? "SPOT" : "ON_DEMAND"
 
-      subnet_ids = module.vpc.private_subnets
+      subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[1]}"
@@ -205,7 +173,7 @@ module "eks" {
       instance_types = var.database_node_instance_types
       capacity_type  = var.database_node_spot ? "SPOT" : "ON_DEMAND"
 
-      subnet_ids = module.vpc.private_subnets
+      subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[2]}"
@@ -237,20 +205,4 @@ data "terraform_remote_state" "global" {
     region = "ap-northeast-2"
   }
 
-}
-
-resource "aws_iam_role" "external_dns" {
-  count = var.is_prod ? 1 : 0
-
-  name               = "external_dns"
-  assume_role_policy = templatefile("oidc-policy.json", { OIDC_ARN = module.eks.oidc_provider_arn, OIDC_URL = replace(module.eks.cluster_oidc_issuer_url, "https://", "") })
-  depends_on         = [module.eks.oidc_provider]
-}
-
-resource "aws_iam_role_policy_attachment" "external_dns_attach" {
-  count = var.is_prod ? 1 : 0
-
-  role       = aws_iam_role.external_dns[0].name
-  policy_arn = data.terraform_remote_state.global.outputs.iam_policy_external_dns_arn
-  depends_on = [aws_iam_role.external_dns]
 }

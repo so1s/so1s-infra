@@ -105,3 +105,18 @@ variable "database_node_instance_types" {
   type        = list(string)
   default     = ["t3.small"]
 }
+
+variable "vpc_id" {
+  description = "VPC ID to use EKS Cluster"
+  type        = string
+}
+
+variable "vpc_private_subnets" {
+  description = "VPC Private Subnets to use EKS Cluster"
+  type        = list(string)
+}
+
+variable "vpc_public_subnets" {
+  description = "VPC Public Subnets to use EKS Cluster"
+  type        = list(string)
+}

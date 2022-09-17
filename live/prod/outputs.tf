@@ -9,5 +9,5 @@ output "cluster_id" {
 
 output "external_dns_role_arn" {
   description = "External DNS ARN for external-dns chart values.yaml"
-  value       = aws_iam_role.external_dns.arn
+  value       = module.iam.external_dns_role_arn
 }
