@@ -64,7 +64,7 @@ module "eks" {
 
     disk_size = 50
   }
-  database_node_instance_types = ["t3.nano"]
+  database_node_instance_types = ["t3.small"]
 }
 
 module "iam" {
