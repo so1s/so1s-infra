@@ -33,8 +33,9 @@ fi
 
 cd $SO1S_ENV_PATH
 
-kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-$SO1S_ENV_NAME.yaml --wait
-kubectl delete -f $SO1S_DEPLOY_REPO_PATH/project/project-$SO1S_ENV_NAME.yaml --wait
+if [ $SO1S_ENV_NUMBER -eq 1 ]; then
+  kubectl delete -f $SO1S_DEPLOY_REPO_PATH/root-$SO1S_ENV_NAME.yaml --wait
+fi
 
 helm uninstall argocd -n argocd --wait
 
