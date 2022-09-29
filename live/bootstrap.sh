@@ -31,6 +31,7 @@ elif [ $SO1S_ENV_NUMBER -eq 1 ]; then
   SO1S_ENV_PATH="./prod"
 fi
 
+SO1S_REGEX="^[1-2]$"
 while [[ ! $SO1S_USE_GPU =~ $SO1S_REGEX ]]
 do
   echo -e "GPU를 사용할 것인지 번호를 입력해주세요. \n-> (1) 미사용 (2) 사용 "
