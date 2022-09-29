@@ -44,6 +44,7 @@ module "eks" {
 
     disk_size = 30
   }
+  inference_node_instance_types = var.inference_node_instance_types
 
   api_node_spot = false
   api_node_size_spec = {
