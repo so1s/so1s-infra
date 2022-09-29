@@ -64,7 +64,7 @@ fi
 echo -e "\n"
 echo "Start Resource Provisioning"
 echo "-> terraform apply -var=global_name=$SO1S_GLOBAL_NAME"
-terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var=`inference_node_instance_types=$INFERENCE_INSTANCE`
+terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var="inference_node_instance_types=$INFERENCE_INSTANCE"
 
 # Using for ALB, External DNS Chart
 RESULT=`terraform output`
