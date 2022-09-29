@@ -44,7 +44,6 @@ module "eks" {
 
     disk_size = 30
   }
-  inference_node_instance_types = ["t3a.medium"]
 
   api_node_spot = true
   api_node_size_spec = {
