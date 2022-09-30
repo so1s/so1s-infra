@@ -41,7 +41,7 @@ done
 # 환경에 따른 글로벌 이름 설정 -> Prod은 고정 값
 if [ $SO1S_USE_GPU -eq 2 ]; then
   INFERENCE_INSTANCE='["g4dn.xlarge"]'
-elif [ $SO1S_ENV_NUMBER -eq 1 ]; then
+elif [ $SO1S_USE_GPU -eq 1 ]; then
   INFERENCE_INSTANCE='["t3a.large"]'
 fi
 
