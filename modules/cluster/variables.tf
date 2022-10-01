@@ -55,7 +55,7 @@ variable "inference_node_spot" {
 variable "inference_node_instance_types" {
   description = "This type will use inference node that use eks"
   type        = list(string)
-  default     = ["t3a.medium"]
+  default     = ["t3a.large"]
 }
 
 variable "api_node_size_spec" {
