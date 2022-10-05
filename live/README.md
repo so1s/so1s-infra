@@ -1,4 +1,4 @@
-## SO1S 개발 환경 사용법 - v0.3.0
+## SO1S 개발 환경 사용법 - v2.0.0
 
 bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
@@ -12,6 +12,10 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 6. aws cli 혹은 aws 시크릿 키를 export하기 -> export AWS_ACCESS_KEY_ID="anaccesskey", export AWS_SECRET_ACCESS_KEY="asecretkey"
 
 하나라도 설치가 안되어 있을 시 쉘 스크립트가 정상동작을 안하니 유의해주시길 바랍니다.
+
+### 이전 버전과 달라진 점
+
+EKS 노드 그룹을 추가 분리함에 따라 so1s v0.4.0과 호환이 안됩니다. 따라서 이전 infra v1.1.0을 기준으로 작업을 해주셔야합니다.
 
 ### 공통 설정
 
