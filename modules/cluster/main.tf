@@ -189,7 +189,7 @@ module "eks" {
     }
 
     library = {
-      name         = "${var.global_name}-cluster-${local.node_names[3]}"
+      name         = "${var.global_name}-cluster-${local.node_names[4]}"
       min_size     = var.library_node_size_spec.min_size
       max_size     = var.library_node_size_spec.max_size
       desired_size = var.library_node_size_spec.desired_size
@@ -202,15 +202,15 @@ module "eks" {
       subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
-      iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
+      iam_role_name                = "So1s-dataplane-${local.node_names[4]}"
       iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
 
       taints = {
-        kind = local.taints[3]
+        kind = local.taints[4]
       }
 
       labels = {
-        kind = local.node_names[3]
+        kind = local.node_names[4]
       }
     }
   }
