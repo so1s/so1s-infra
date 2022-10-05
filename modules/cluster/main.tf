@@ -105,6 +105,10 @@ module "eks" {
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
       iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_public_iam_policies)
 
+      taints = {
+        kind = local.taints[3]
+      }
+
       labels = {
         kind = local.node_names[3]
       }
