@@ -46,15 +46,26 @@ module "eks" {
   }
   inference_node_instance_types = var.inference_node_instance_types
 
-  api_node_spot = true
-  api_node_size_spec = {
+  application_node_spot = true
+  application_node_size_spec = {
+    min_size     = 1
+    max_size     = 3
+    desired_size = 1
+
+    disk_size = 30
+  }
+  application_node_instance_types = ["t3.small"]
+
+  library_node_spot = true
+  library_node_size_spec = {
     min_size     = 3
     max_size     = 3
     desired_size = 3
 
     disk_size = 30
   }
-  api_node_instance_types = ["t3.small"]
+  library_node_instance_types = ["t3.small"]
+
 
   database_node_spot = true
   database_node_size_spec = {
