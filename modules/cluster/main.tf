@@ -11,6 +11,7 @@ locals {
   taints = [
     for node_name in slice(local.node_names, 0, length(local.node_names) - 1) : merge(local.default_taint, { value = node_name })
   ]
+  uses_gpu = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
 }
 
 
@@ -99,6 +100,13 @@ module "eks" {
       instance_types = var.public_node_instance_types
       capacity_type  = var.public_node_spot ? "SPOT" : "ON_DEMAND"
 
+      create_launch_template = true
+
+      bootstrap_env = {
+        CONTAINER_RUNTIME = "containerd"
+        USE_MAX_PODS      = false
+      }
+
       subnet_ids = var.vpc_public_subnets
 
       create_iam_role              = true
@@ -119,7 +127,15 @@ module "eks" {
       disk_size = var.inference_node_size_spec.disk_size
 
       instance_types = var.inference_node_instance_types
+      ami_type = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
+
+      create_launch_template = true
+
+      bootstrap_env = {
+        CONTAINER_RUNTIME = "containerd"
+        USE_MAX_PODS      = false
+      }
 
       subnet_ids = var.vpc_private_subnets
 
@@ -147,6 +163,13 @@ module "eks" {
       instance_types = var.api_node_instance_types
       capacity_type  = var.api_node_spot ? "SPOT" : "ON_DEMAND"
 
+      create_launch_template = true
+
+      bootstrap_env = {
+        CONTAINER_RUNTIME = "containerd"
+        USE_MAX_PODS      = false
+      }
+
       subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
@@ -172,6 +195,13 @@ module "eks" {
 
       instance_types = var.database_node_instance_types
       capacity_type  = var.database_node_spot ? "SPOT" : "ON_DEMAND"
+
+      create_launch_template = true
+
+      bootstrap_env = {
+        CONTAINER_RUNTIME = "containerd"
+        USE_MAX_PODS      = false
+      }
 
       subnet_ids = var.vpc_private_subnets
 

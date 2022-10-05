@@ -113,6 +113,13 @@ helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO
 echo -e "\n\n"
 echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
+if [ $SO1S_USE_GPU -eq 2 ]; then
+  echo -e "\n"
+  echo "Apply Nvidia K8S Plugin"
+  echo "-> kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.9.0/nvidia-device-plugin.yml"
+  kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.9.0/nvidia-device-plugin.yml
+fi
+
 # Create argocd project resource
 echo -e "\n"
 echo "Create ArgoCD Project Resource"
