@@ -9,7 +9,7 @@ locals {
     effect = "NO_SCHEDULE"
   }
   taints = [
-    for node_name in slice(local.node_names, 0, length(local.node_names) - 1) : merge(local.default_taint, { value = node_name })
+    for node_name in slice(local.node_names, 0, length(local.node_names)) : merge(local.default_taint, { value = node_name })
   ]
 }
 
