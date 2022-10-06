@@ -58,8 +58,8 @@ variable "inference_node_instance_types" {
   default     = ["t3a.large"]
 }
 
-variable "api_node_size_spec" {
-  description = "This type will use api node that use eks"
+variable "application_node_size_spec" {
+  description = "This type will use application node that use eks"
   type        = map(any)
   default = {
     min_size     = 3
@@ -70,20 +70,20 @@ variable "api_node_size_spec" {
   }
 }
 
-variable "api_node_spot" {
-  description = "This type will use api node that use eks"
+variable "application_node_spot" {
+  description = "This type will use application node that use eks"
   type        = bool
   default     = true
 }
 
-variable "api_node_instance_types" {
-  description = "This type will use api node that use eks"
+variable "application_node_instance_types" {
+  description = "This type will use application node that use eks"
   type        = list(string)
   default     = ["t3.small"]
 }
 
 variable "database_node_size_spec" {
-  description = "This type will use api node that use eks"
+  description = "This type will use database node that use eks"
   type        = map(any)
   default = {
     min_size     = 1
@@ -102,6 +102,30 @@ variable "database_node_spot" {
 
 variable "database_node_instance_types" {
   description = "This type will use database node that use eks"
+  type        = list(string)
+  default     = ["t3.small"]
+}
+
+variable "library_node_size_spec" {
+  description = "This type will use library node that use eks"
+  type        = map(any)
+  default = {
+    min_size     = 3
+    max_size     = 3
+    desired_size = 3
+
+    disk_size = 30
+  }
+}
+
+variable "library_node_spot" {
+  description = "This type will use library node that use eks"
+  type        = bool
+  default     = true
+}
+
+variable "library_node_instance_types" {
+  description = "This type will use library node that use eks"
   type        = list(string)
   default     = ["t3.small"]
 }
