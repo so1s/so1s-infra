@@ -18,3 +18,4 @@ echo "Wait for Sealed-Secret to be created"
 sleep 10
 DEPLOYMENT_NAME=`kubectl get deployment -n backend | grep so1s | cut -d ' ' -f1`
 kubectl rollout restart deployment -n backend $DEPLOYMENT_NAME 
+kubectl rollout restart deployment -n frontend frontend

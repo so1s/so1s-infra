@@ -1,15 +1,15 @@
 locals {
-  region                             = "ap-northeast-2"
-  eks_nodegroup_default_iam_policies = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
-  eks_nodegroup_public_iam_policies  = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
-  eks_nodegroup_api_iam_policies     = ["arn:aws:iam::aws:policy/PowerUserAccess"]
-  node_names                         = ["inference", "api", "database", "public"]
+  region                                 = "ap-northeast-2"
+  eks_nodegroup_default_iam_policies     = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
+  eks_nodegroup_public_iam_policies      = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
+  eks_nodegroup_application_iam_policies = ["arn:aws:iam::aws:policy/PowerUserAccess"]
+  node_names                             = ["inference", "application", "database", "public", "library"]
   default_taint = {
     key    = "kind"
     effect = "NO_SCHEDULE"
   }
   taints = [
-    for node_name in slice(local.node_names, 0, length(local.node_names) - 1) : merge(local.default_taint, { value = node_name })
+    for node_name in slice(local.node_names, 0, length(local.node_names)) : merge(local.default_taint, { value = node_name })
   ]
   uses_gpu = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
 }
@@ -124,6 +124,14 @@ module "eks" {
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
       iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_public_iam_policies)
 
+      taints = {
+        custom_taint = {
+          key    = "kind"
+          effect = "PREFER_NO_SCHEDULE"
+          value  = local.node_names[3]
+        }
+      }
+
       labels = {
         kind = local.node_names[3]
       }
@@ -172,18 +180,18 @@ module "eks" {
       }
     }
 
-    api = {
+    application = {
       name         = "${var.global_name}-cluster-${local.node_names[1]}"
-      min_size     = var.api_node_size_spec.min_size
-      max_size     = var.api_node_size_spec.max_size
-      desired_size = var.api_node_size_spec.desired_size
+      min_size     = var.application_node_size_spec.min_size
+      max_size     = var.application_node_size_spec.max_size
+      desired_size = var.application_node_size_spec.desired_size
 
-      disk_size = var.api_node_size_spec.disk_size
+      disk_size = var.application_node_size_spec.disk_size
 
-      instance_types = var.api_node_instance_types
+      instance_types = var.application_node_spot
       ami_id = "ami-07615daea13cb7a76"
       ami_type = "AL2_x86_64"
-      capacity_type  = var.api_node_spot ? "SPOT" : "ON_DEMAND"
+      capacity_type  = var.application_node_spot ? "SPOT" : "ON_DEMAND"
 
       # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
 
@@ -204,7 +212,7 @@ module "eks" {
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[1]}"
-      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_api_iam_policies)
+      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_application_iam_policies)
 
       taints = {
         kind = local.taints[1]
@@ -247,7 +255,7 @@ module "eks" {
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[2]}"
-      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_api_iam_policies)
+      iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_application_iam_policies)
 
       taints = {
         kind = local.taints[2]
@@ -255,6 +263,49 @@ module "eks" {
 
       labels = {
         kind = local.node_names[2]
+      }
+    }
+
+    library = {
+      name         = "${var.global_name}-cluster-${local.node_names[4]}"
+      min_size     = var.library_node_size_spec.min_size
+      max_size     = var.library_node_size_spec.max_size
+      desired_size = var.library_node_size_spec.desired_size
+
+      disk_size = var.library_node_size_spec.disk_size
+
+      instance_types = var.library_node_instance_types
+      ami_id = "ami-07615daea13cb7a76"
+      ami_type = "AL2_x86_64"
+      capacity_type  = var.library_node_spot ? "SPOT" : "ON_DEMAND"
+
+      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
+
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+      EOT
+
+      subnet_ids = var.vpc_private_subnets
+
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[4]}"
+      iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
+
+      taints = {
+        kind = local.taints[4]
+      }
+
+      labels = {
+        kind = local.node_names[4]
       }
     }
   }
