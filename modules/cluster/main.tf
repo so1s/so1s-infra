@@ -12,6 +12,18 @@ locals {
     for node_name in slice(local.node_names, 0, length(local.node_names)) : merge(local.default_taint, { value = node_name })
   ]
   uses_gpu = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
+
+  # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
+  pre_bootstrap_user_data = <<-EOT
+  #!/bin/bash
+  set -ex
+  cat <<-EOF > /etc/profile.d/bootstrap.sh
+  export CONTAINER_RUNTIME="containerd"
+  export USE_MAX_PODS=false
+  EOF
+  # Source extra environment variables in bootstrap script
+  sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+  EOT
 }
 
 
@@ -102,21 +114,9 @@ module "eks" {
       ami_type = "AL2_x86_64"
       capacity_type  = var.public_node_spot ? "SPOT" : "ON_DEMAND"
 
-      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
+      enable_bootstrap_user_data = true
 
-      create_launch_template = false
-      launch_template_name = ""
-
-      pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      set -ex
-      cat <<-EOF > /etc/profile.d/bootstrap.sh
-      export CONTAINER_RUNTIME="containerd"
-      export USE_MAX_PODS=false
-      EOF
-      # Source extra environment variables in bootstrap script
-      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-      EOT
+      pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
       subnet_ids = var.vpc_public_subnets
 
@@ -150,20 +150,9 @@ module "eks" {
       ami_id = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
-      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
-
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      set -ex
-      cat <<-EOF > /etc/profile.d/bootstrap.sh
-      export CONTAINER_RUNTIME="containerd"
-      export USE_MAX_PODS=false
-      EOF
-      # Source extra environment variables in bootstrap script
-      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-      EOT
+      pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -193,20 +182,9 @@ module "eks" {
       ami_type = "AL2_x86_64"
       capacity_type  = var.application_node_spot ? "SPOT" : "ON_DEMAND"
 
-      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
-
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      set -ex
-      cat <<-EOF > /etc/profile.d/bootstrap.sh
-      export CONTAINER_RUNTIME="containerd"
-      export USE_MAX_PODS=false
-      EOF
-      # Source extra environment variables in bootstrap script
-      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-      EOT
+      pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -236,20 +214,9 @@ module "eks" {
       ami_type = "AL2_x86_64"
       capacity_type  = var.database_node_spot ? "SPOT" : "ON_DEMAND"
 
-      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
-
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      set -ex
-      cat <<-EOF > /etc/profile.d/bootstrap.sh
-      export CONTAINER_RUNTIME="containerd"
-      export USE_MAX_PODS=false
-      EOF
-      # Source extra environment variables in bootstrap script
-      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-      EOT
+      pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -279,20 +246,9 @@ module "eks" {
       ami_type = "AL2_x86_64"
       capacity_type  = var.library_node_spot ? "SPOT" : "ON_DEMAND"
 
-      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
-
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      set -ex
-      cat <<-EOF > /etc/profile.d/bootstrap.sh
-      export CONTAINER_RUNTIME="containerd"
-      export USE_MAX_PODS=false
-      EOF
-      # Source extra environment variables in bootstrap script
-      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-      EOT
+      pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
