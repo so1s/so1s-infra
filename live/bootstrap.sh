@@ -116,8 +116,8 @@ echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-se
 if [ $SO1S_USE_GPU -eq 2 ]; then
   echo -e "\n"
   echo "Apply Nvidia K8S Plugin"
-  echo "-> kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.9.0/nvidia-device-plugin.yml"
-  kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.9.0/nvidia-device-plugin.yml
+  echo "-> kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.12.3/nvidia-device-plugin.yml"
+  kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.12.3/nvidia-device-plugin.yml
 fi
 
 # Create argocd project resource
