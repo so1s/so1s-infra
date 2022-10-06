@@ -98,14 +98,25 @@ module "eks" {
       disk_size = var.public_node_size_spec.disk_size
 
       instance_types = var.public_node_instance_types
+      ami_id = "ami-07615daea13cb7a76"
+      ami_type = "AL2_x86_64"
       capacity_type  = var.public_node_spot ? "SPOT" : "ON_DEMAND"
 
-      create_launch_template = true
+      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
 
-      bootstrap_env = {
-        CONTAINER_RUNTIME = "containerd"
-        USE_MAX_PODS      = false
-      }
+      create_launch_template = false
+      launch_template_name = ""
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+      EOT
 
       subnet_ids = var.vpc_public_subnets
 
@@ -124,18 +135,27 @@ module "eks" {
       max_size     = var.inference_node_size_spec.max_size
       desired_size = var.inference_node_size_spec.desired_size
 
-      disk_size = var.inference_node_size_spec.disk_size
+      disk_size = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
 
       instance_types = var.inference_node_instance_types
       ami_type = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
-      create_launch_template = true
+      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
 
-      bootstrap_env = {
-        CONTAINER_RUNTIME = "containerd"
-        USE_MAX_PODS      = false
-      }
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+      EOT
 
       subnet_ids = var.vpc_private_subnets
 
@@ -161,14 +181,24 @@ module "eks" {
       disk_size = var.api_node_size_spec.disk_size
 
       instance_types = var.api_node_instance_types
+      ami_id = "ami-07615daea13cb7a76"
+      ami_type = "AL2_x86_64"
       capacity_type  = var.api_node_spot ? "SPOT" : "ON_DEMAND"
 
-      create_launch_template = true
+      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
 
-      bootstrap_env = {
-        CONTAINER_RUNTIME = "containerd"
-        USE_MAX_PODS      = false
-      }
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+      EOT
 
       subnet_ids = var.vpc_private_subnets
 
@@ -194,14 +224,24 @@ module "eks" {
       disk_size = var.database_node_size_spec.disk_size
 
       instance_types = var.database_node_instance_types
+      ami_id = "ami-07615daea13cb7a76"
+      ami_type = "AL2_x86_64"
       capacity_type  = var.database_node_spot ? "SPOT" : "ON_DEMAND"
 
-      create_launch_template = true
+      # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
 
-      bootstrap_env = {
-        CONTAINER_RUNTIME = "containerd"
-        USE_MAX_PODS      = false
-      }
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+      EOT
 
       subnet_ids = var.vpc_private_subnets
 
