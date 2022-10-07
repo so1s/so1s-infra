@@ -1,4 +1,4 @@
-## SO1S 개발 환경 사용법 - v2.0.0
+## SO1S 개발 환경 사용법 - v2.1.0
 
 bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 
@@ -24,6 +24,7 @@ EKS 노드 그룹을 추가 분리함에 따라 so1s v0.4.0과 호환이 안됩�
 # 사전 환경 작업
 chmod +x ./bootstrap.sh
 chmod +x ./bootstrap-sealed-secret.sh
+chmod +x ./bootstrap-with-notification.sh
 chmod +x ./clean-up.sh
 
 ```
@@ -34,6 +35,8 @@ chmod +x ./clean-up.sh
 # =====================
 # Terraform 프로비저닝
 ./bootstrap.sh
+# 혹은 Slack Webhook를 같이 사용하면서 프로비저닝
+./bootstrap-with-notification.sh
 
 # ArgoCD UI 포트포워딩
 kubectl port-forward service/argocd-server -n argocd 8080:443
