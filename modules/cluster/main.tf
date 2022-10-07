@@ -110,8 +110,8 @@ module "eks" {
       disk_size = var.public_node_size_spec.disk_size
 
       instance_types = var.public_node_instance_types
-      ami_id = "ami-07615daea13cb7a76"
-      ami_type = "AL2_x86_64"
+      ami_id         = "ami-07615daea13cb7a76"
+      ami_type       = "AL2_x86_64"
       capacity_type  = var.public_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -146,8 +146,8 @@ module "eks" {
       disk_size = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
 
       instance_types = var.inference_node_instance_types
-      ami_type = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
-      ami_id = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
+      ami_type       = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id         = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -177,9 +177,9 @@ module "eks" {
 
       disk_size = var.application_node_size_spec.disk_size
 
-      instance_types = var.application_node_spot
-      ami_id = "ami-07615daea13cb7a76"
-      ami_type = "AL2_x86_64"
+      instance_types = var.application_node_instance_types
+      ami_id         = "ami-07615daea13cb7a76"
+      ami_type       = "AL2_x86_64"
       capacity_type  = var.application_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -210,8 +210,8 @@ module "eks" {
       disk_size = var.database_node_size_spec.disk_size
 
       instance_types = var.database_node_instance_types
-      ami_id = "ami-07615daea13cb7a76"
-      ami_type = "AL2_x86_64"
+      ami_id         = "ami-07615daea13cb7a76"
+      ami_type       = "AL2_x86_64"
       capacity_type  = var.database_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -242,8 +242,8 @@ module "eks" {
       disk_size = var.library_node_size_spec.disk_size
 
       instance_types = var.library_node_instance_types
-      ami_id = "ami-07615daea13cb7a76"
-      ami_type = "AL2_x86_64"
+      ami_id         = "ami-07615daea13cb7a76"
+      ami_type       = "AL2_x86_64"
       capacity_type  = var.library_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
