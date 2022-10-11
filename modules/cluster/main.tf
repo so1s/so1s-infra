@@ -20,6 +20,13 @@ locals {
   cat <<-EOF > /etc/profile.d/bootstrap.sh
   export CONTAINER_RUNTIME="containerd"
   export USE_MAX_PODS=false
+
+  sudo yum update -y
+  sudo amazon-linux-extras install docker
+  sudo service docker start
+  sudo usermod -a -G docker ec2-user
+  sudo setfacl -m user:ec2-user:rw /var/run/docker.sock
+
   EOF
   # Source extra environment variables in bootstrap script
   sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
