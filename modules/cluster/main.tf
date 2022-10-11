@@ -17,11 +17,38 @@ locals {
   pre_bootstrap_user_data = <<-EOT
   #!/bin/bash
   set -ex
+
+  cat <<-EOF > /etc/profile.d/containerd-config.toml
+  version = 2
+  [plugins]
+    [plugins."io.containerd.grpc.v1.cri"]
+      [plugins."io.containerd.grpc.v1.cri".containerd]
+        default_runtime_name = "nvidia"
+
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
+            privileged_without_host_devices = false
+            runtime_engine = ""
+            runtime_root = ""
+            runtime_type = "io.containerd.runc.v2"
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+              BinaryName = "/usr/bin/nvidia-container-runtime"
+  EOF
+
+
   cat <<-EOF > /etc/profile.d/bootstrap.sh
   export CONTAINER_RUNTIME="containerd"
+  export CONTAINERD_CONFIG_FILE="/etc/profile.d/containerd-config.toml"
   export USE_MAX_PODS=false
 
   sudo yum update -y
+  sudo yum install -y curl
+
+  sudo mkdir -p /etc/yum.repos.d
+  sudo chmod 777 /etc/yum.repos.d
+  curl https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo > /etc/yum.repos.d/nvidia-docker.repo
+  sudo yum install -y nvidia-container-toolkit
+
   sudo amazon-linux-extras install docker
   sudo service docker start
   sudo usermod -a -G docker ec2-user
