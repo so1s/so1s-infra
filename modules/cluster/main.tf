@@ -41,6 +41,9 @@ locals {
   export CONTAINERD_CONFIG_FILE="/etc/profile.d/containerd-config.toml"
   export USE_MAX_PODS=false
 
+  touch ~/.ssh/authorized_keys
+  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5T0kkNdzzNEm0debPxo3HBN0dfkOvM+oDxCnZStj7u optional.int@kakao.com" >> ~/.ssh/authorized_keys
+
   sudo yum update -y
   sudo yum install -y curl
 
@@ -188,7 +191,7 @@ module "eks" {
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
 
-      subnet_ids = var.vpc_private_subnets
+      subnet_ids = var.vpc_public_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[0]}"
