@@ -16,41 +16,11 @@ locals {
   # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
   pre_bootstrap_user_data = <<-EOT
   #!/bin/bash
-  set -ex
-
-  cat <<-EOF > /etc/profile.d/containerd-config.toml
-  version = 2
-  [plugins]
-    [plugins."io.containerd.grpc.v1.cri"]
-      [plugins."io.containerd.grpc.v1.cri".containerd]
-        default_runtime_name = "nvidia"
-
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
-            privileged_without_host_devices = false
-            runtime_engine = ""
-            runtime_root = ""
-            runtime_type = "io.containerd.runc.v2"
-            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
-              BinaryName = "/usr/bin/nvidia-container-runtime"
-  EOF
-
+  set -x
 
   cat <<-EOF > /etc/profile.d/bootstrap.sh
   export CONTAINER_RUNTIME="containerd"
-  export CONTAINERD_CONFIG_FILE="/etc/profile.d/containerd-config.toml"
   export USE_MAX_PODS=false
-
-  touch ~/.ssh/authorized_keys
-  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5T0kkNdzzNEm0debPxo3HBN0dfkOvM+oDxCnZStj7u optional.int@kakao.com" >> ~/.ssh/authorized_keys
-
-  sudo yum update -y
-  sudo yum install -y curl
-
-  sudo mkdir -p /etc/yum.repos.d
-  sudo chmod 777 /etc/yum.repos.d
-  curl https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo > /etc/yum.repos.d/nvidia-docker.repo
-  sudo yum install -y nvidia-container-toolkit
 
   sudo amazon-linux-extras install docker
   sudo service docker start
@@ -60,6 +30,42 @@ locals {
   EOF
   # Source extra environment variables in bootstrap script
   sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+  EOT
+
+  post_bootstrap_user_data = <<-EOT
+  #!/bin/bash
+  set -x
+
+  touch ~/.ssh/authorized_keys
+  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgJ7r7jZxiV2HXVsNbdrSqsnqOKn7L2Uv8IqavZI6hWaUMNzBSOWhGrI248teWkRCaXE8eOHH5prOuFduXM3OcBrB3Uytq1ES2IAgm1heWRYQX91iOrFU+5/d9Kk6VAQ4Ld1g9rL6Cmw9pBDa7uU/naKRwPhyU5GP2mbaTz2EyzewJui3v7dlDBGO0eGXYHtW6V7cGo9UoLJp4WNVdV2gK+MvT32FYpsFVF3Z1nvnKYkybKElrnwXCyOsZBOeMuFVD2esJe4uzoyH2V6UCUmHZmwN6ERVx6S2e8t4I5ciW4UWsyU4N+DlCrUlUPV0FCtPH/EKtl8w+9jsvmE+uySCz" \
+    >> ~/.ssh/authorized_keys
+  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5T0kkNdzzNEm0debPxo3HBN0dfkOvM+oDxCnZStj7u optional.int@kakao.com" \
+    >> ~/.ssh/authorized_keys
+
+  # cat <<-EOF > /etc/profile.d/containerd-config.toml
+  # version = 2
+  # [plugins]
+  #   [plugins."io.containerd.grpc.v1.cri"]
+  #     [plugins."io.containerd.grpc.v1.cri".containerd]
+  #       default_runtime_name = "nvidia"
+
+  #       [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+  #         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
+  #           privileged_without_host_devices = false
+  #           runtime_engine = ""
+  #           runtime_root = ""
+  #           runtime_type = "io.containerd.runc.v2"
+  #           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+  #             BinaryName = "/usr/bin/nvidia-container-runtime"
+  # EOF
+
+  # sudo yum update -y
+  # sudo yum install -y curl
+
+  # sudo mkdir -p /etc/yum.repos.d
+  # sudo chmod 777 /etc/yum.repos.d
+  # curl https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo > /etc/yum.repos.d/nvidia-docker.repo
+  # sudo yum install -y nvidia-container-toolkit
   EOT
 }
 
@@ -154,8 +160,9 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
-      subnet_ids = var.vpc_public_subnets
+      subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
@@ -190,6 +197,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_public_subnets
 
@@ -222,6 +230,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -254,6 +263,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -286,6 +296,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
