@@ -162,7 +162,7 @@ module "eks" {
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
-      subnet_ids = var.vpc_private_subnets
+      subnet_ids = var.vpc_public_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
@@ -199,7 +199,7 @@ module "eks" {
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
-      subnet_ids = var.vpc_public_subnets
+      subnet_ids = var.vpc_private_subnets
 
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[0]}"
