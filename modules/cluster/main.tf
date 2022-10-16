@@ -39,33 +39,6 @@ locals {
   touch ~/.ssh/authorized_keys
   echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgJ7r7jZxiV2HXVsNbdrSqsnqOKn7L2Uv8IqavZI6hWaUMNzBSOWhGrI248teWkRCaXE8eOHH5prOuFduXM3OcBrB3Uytq1ES2IAgm1heWRYQX91iOrFU+5/d9Kk6VAQ4Ld1g9rL6Cmw9pBDa7uU/naKRwPhyU5GP2mbaTz2EyzewJui3v7dlDBGO0eGXYHtW6V7cGo9UoLJp4WNVdV2gK+MvT32FYpsFVF3Z1nvnKYkybKElrnwXCyOsZBOeMuFVD2esJe4uzoyH2V6UCUmHZmwN6ERVx6S2e8t4I5ciW4UWsyU4N+DlCrUlUPV0FCtPH/EKtl8w+9jsvmE+uySCz" \
     >> ~/.ssh/authorized_keys
-  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5T0kkNdzzNEm0debPxo3HBN0dfkOvM+oDxCnZStj7u optional.int@kakao.com" \
-    >> ~/.ssh/authorized_keys
-
-  # cat <<-EOF > /etc/profile.d/containerd-config.toml
-  # version = 2
-  # [plugins]
-  #   [plugins."io.containerd.grpc.v1.cri"]
-  #     [plugins."io.containerd.grpc.v1.cri".containerd]
-  #       default_runtime_name = "nvidia"
-
-  #       [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-  #         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
-  #           privileged_without_host_devices = false
-  #           runtime_engine = ""
-  #           runtime_root = ""
-  #           runtime_type = "io.containerd.runc.v2"
-  #           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
-  #             BinaryName = "/usr/bin/nvidia-container-runtime"
-  # EOF
-
-  # sudo yum update -y
-  # sudo yum install -y curl
-
-  # sudo mkdir -p /etc/yum.repos.d
-  # sudo chmod 777 /etc/yum.repos.d
-  # curl https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo > /etc/yum.repos.d/nvidia-docker.repo
-  # sudo yum install -y nvidia-container-toolkit
   EOT
 }
 
