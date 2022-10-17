@@ -114,8 +114,6 @@ module "eks" {
       max_size     = var.public_node_size_spec.max_size
       desired_size = var.public_node_size_spec.desired_size
 
-      disk_size = var.public_node_size_spec.disk_size
-
       instance_types = var.public_node_instance_types
       ami_id         = "ami-07615daea13cb7a76"
       ami_type       = "AL2_x86_64"
@@ -130,6 +128,21 @@ module "eks" {
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[3]}"
       iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_public_iam_policies)
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.public_node_size_spec.disk_size
+            volume_type           = "gp2"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         custom_taint = {
@@ -150,8 +163,6 @@ module "eks" {
       max_size     = var.inference_node_size_spec.max_size
       desired_size = var.inference_node_size_spec.desired_size
 
-      disk_size = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
-
       instance_types = var.inference_node_instance_types
       ami_type       = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
       ami_id         = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
@@ -166,6 +177,21 @@ module "eks" {
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[0]}"
       iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
+            volume_type           = "gp2"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         kind = local.taints[0]
@@ -182,8 +208,6 @@ module "eks" {
       max_size     = var.application_node_size_spec.max_size
       desired_size = var.application_node_size_spec.desired_size
 
-      disk_size = var.application_node_size_spec.disk_size
-
       instance_types = var.application_node_instance_types
       ami_id         = "ami-07615daea13cb7a76"
       ami_type       = "AL2_x86_64"
@@ -198,6 +222,21 @@ module "eks" {
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[1]}"
       iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_application_iam_policies)
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.application_node_size_spec.disk_size
+            volume_type           = "gp2"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         kind = local.taints[1]
@@ -214,8 +253,6 @@ module "eks" {
       max_size     = var.database_node_size_spec.max_size
       desired_size = var.database_node_size_spec.desired_size
 
-      disk_size = var.database_node_size_spec.disk_size
-
       instance_types = var.database_node_instance_types
       ami_id         = "ami-07615daea13cb7a76"
       ami_type       = "AL2_x86_64"
@@ -230,6 +267,21 @@ module "eks" {
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[2]}"
       iam_role_additional_policies = concat(local.eks_nodegroup_default_iam_policies, local.eks_nodegroup_application_iam_policies)
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.database_node_size_spec.disk_size
+            volume_type           = "gp2"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         kind = local.taints[2]
@@ -246,8 +298,6 @@ module "eks" {
       max_size     = var.library_node_size_spec.max_size
       desired_size = var.library_node_size_spec.desired_size
 
-      disk_size = var.library_node_size_spec.disk_size
-
       instance_types = var.library_node_instance_types
       ami_id         = "ami-07615daea13cb7a76"
       ami_type       = "AL2_x86_64"
@@ -262,6 +312,21 @@ module "eks" {
       create_iam_role              = true
       iam_role_name                = "So1s-dataplane-${local.node_names[4]}"
       iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.library_node_size_spec.disk_size
+            volume_type           = "gp2"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
 
       taints = {
         kind = local.taints[4]
