@@ -16,12 +16,12 @@ locals {
   # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
   pre_bootstrap_user_data = <<-EOT
   #!/bin/bash
-  set -ex
+  set -x
+
   cat <<-EOF > /etc/profile.d/bootstrap.sh
   export CONTAINER_RUNTIME="containerd"
   export USE_MAX_PODS=false
 
-  sudo yum update -y
   sudo amazon-linux-extras install docker
   sudo service docker start
   sudo usermod -a -G docker ec2-user
@@ -30,6 +30,15 @@ locals {
   EOF
   # Source extra environment variables in bootstrap script
   sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+  EOT
+
+  post_bootstrap_user_data = <<-EOT
+  #!/bin/bash
+  set -x
+
+  touch ~/.ssh/authorized_keys
+  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgJ7r7jZxiV2HXVsNbdrSqsnqOKn7L2Uv8IqavZI6hWaUMNzBSOWhGrI248teWkRCaXE8eOHH5prOuFduXM3OcBrB3Uytq1ES2IAgm1heWRYQX91iOrFU+5/d9Kk6VAQ4Ld1g9rL6Cmw9pBDa7uU/naKRwPhyU5GP2mbaTz2EyzewJui3v7dlDBGO0eGXYHtW6V7cGo9UoLJp4WNVdV2gK+MvT32FYpsFVF3Z1nvnKYkybKElrnwXCyOsZBOeMuFVD2esJe4uzoyH2V6UCUmHZmwN6ERVx6S2e8t4I5ciW4UWsyU4N+DlCrUlUPV0FCtPH/EKtl8w+9jsvmE+uySCz" \
+    >> ~/.ssh/authorized_keys
   EOT
 }
 
@@ -122,6 +131,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_public_subnets
 
@@ -171,6 +181,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -216,6 +227,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -261,6 +273,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
@@ -306,6 +319,7 @@ module "eks" {
       enable_bootstrap_user_data = true
 
       pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
 
