@@ -53,6 +53,9 @@ module "eks" {
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
 
+  create_cloudwatch_log_group = false
+  cluster_enabled_log_types   = []
+
   cluster_addons = {
     coredns = {
       addon_version     = "v1.8.7-eksbuild.1"
@@ -130,7 +133,7 @@ module "eks" {
 
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_public_subnets
@@ -180,7 +183,7 @@ module "eks" {
 
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
@@ -226,7 +229,7 @@ module "eks" {
 
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
@@ -272,7 +275,7 @@ module "eks" {
 
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
@@ -318,7 +321,7 @@ module "eks" {
 
       enable_bootstrap_user_data = true
 
-      pre_bootstrap_user_data = local.pre_bootstrap_user_data
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
       post_bootstrap_user_data = local.post_bootstrap_user_data
 
       subnet_ids = var.vpc_private_subnets
