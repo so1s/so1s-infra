@@ -145,7 +145,7 @@ module "eks" {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = var.public_node_size_spec.disk_size
-            volume_type           = "gp2"
+            volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
             encrypted             = false
@@ -195,7 +195,7 @@ module "eks" {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
-            volume_type           = "gp2"
+            volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
             encrypted             = false
@@ -241,7 +241,7 @@ module "eks" {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = var.application_node_size_spec.disk_size
-            volume_type           = "gp2"
+            volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
             encrypted             = false
@@ -287,7 +287,7 @@ module "eks" {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = var.database_node_size_spec.disk_size
-            volume_type           = "gp2"
+            volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
             encrypted             = false
@@ -333,7 +333,7 @@ module "eks" {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = var.library_node_size_spec.disk_size
-            volume_type           = "gp2"
+            volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
             encrypted             = false
