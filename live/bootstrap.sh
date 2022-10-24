@@ -124,7 +124,7 @@ if [ $SO1S_USE_GPU -eq 2 ]; then
   if [ HAVE_GPU_HELM_REPO ]; then
     echo `helm repo add nvidia https://nvidia.github.io/gpu-operator`
   fi
-  helm install gpu -n gpu -f $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu/$SO1S_ENV_NAME-values.yaml nvidia/gpu-operator --create-namespace --wait
+  helm install gpu -n gpu -f $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu/$SO1S_ENV_NAME-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu --create-namespace --wait
 fi
 
 
