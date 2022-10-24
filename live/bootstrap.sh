@@ -113,6 +113,18 @@ helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO
 echo -e "\n\n"
 echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
+if [ $SO1S_USE_GPU -eq 2 ]; then
+  echo -e "\n"
+  echo "Start GPU Setting"
+  echo "-> helm install "
+  HAVE_GPU_HELM_REPO=`helm repo list | grep "https://nvidia.github.io/gpu-operator"`
+  if [ HAVE_GPU_HELM_REPO ]; then
+    echo `helm repo add nvidia https://nvidia.github.io/gpu-operator`
+  fi
+  helm install gpu-operator -n gpu-operator -f charts/extension/gpu-operator/$SO1S_ENV_NAME-values.yaml nvidia/gpu-operator --create-namespace --wait
+fi
+
+
 # Create argocd project resource
 echo -e "\n"
 echo "Create ArgoCD Project Resource"
