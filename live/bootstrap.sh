@@ -107,7 +107,10 @@ fi
 echo -e "\n"
 echo "Install ArgoCD"
 echo "-> helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait"
-helm repo add argo https://argoproj.github.io/argo-helm
+HAVE_ARGO_HELM_REPO=`helm repo list | grep "https://argoproj.github.io/argo-helm"`
+  if [ HAVE_ARGO_HELM_REPO ]; then
+    echo `helm repo add argo https://argoproj.github.io/argo-helm`
+  fi
 helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait
 
 echo -e "\n\n"
@@ -115,10 +118,15 @@ echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-se
 
 if [ $SO1S_USE_GPU -eq 2 ]; then
   echo -e "\n"
-  echo "Apply Nvidia K8S Plugin"
-  echo "-> kubectl create -f https://gist.githubusercontent.com/DPS0340/8521b400c5ab5a20a3886714068cad56/raw/5fd58414059b4cc30ef1a2ef5d7dbcd535570020/nvidia-device-plugin.yml"
-  kubectl create -f https://gist.githubusercontent.com/DPS0340/8521b400c5ab5a20a3886714068cad56/raw/5fd58414059b4cc30ef1a2ef5d7dbcd535570020/nvidia-device-plugin.yml
+  echo "Start GPU Setting"
+  echo "-> helm install "
+  HAVE_GPU_HELM_REPO=`helm repo list | grep "https://nvidia.github.io/gpu-operator"`
+  if [ HAVE_GPU_HELM_REPO ]; then
+    echo `helm repo add nvidia https://nvidia.github.io/gpu-operator`
+  fi
+  helm install gpu -n gpu -f $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu/$SO1S_ENV_NAME-values.yaml $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu --create-namespace --wait
 fi
+
 
 # Create argocd project resource
 echo -e "\n"
