@@ -107,7 +107,10 @@ fi
 echo -e "\n"
 echo "Install ArgoCD"
 echo "-> helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait"
-helm repo add argo https://argoproj.github.io/argo-helm
+HAVE_ARGO_HELM_REPO=`helm repo list | grep "https://argoproj.github.io/argo-helm"`
+  if [ HAVE_ARGO_HELM_REPO ]; then
+    echo `helm repo add argo https://argoproj.github.io/argo-helm`
+  fi
 helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait
 
 echo -e "\n\n"
@@ -121,7 +124,7 @@ if [ $SO1S_USE_GPU -eq 2 ]; then
   if [ HAVE_GPU_HELM_REPO ]; then
     echo `helm repo add nvidia https://nvidia.github.io/gpu-operator`
   fi
-  helm install gpu-operator -n gpu-operator -f charts/extension/gpu-operator/$SO1S_ENV_NAME-values.yaml nvidia/gpu-operator --create-namespace --wait
+  helm install gpu -n gpu -f $SO1S_DEPLOY_REPO_PATH/charts/extension/gpu-operator/$SO1S_ENV_NAME-values.yaml nvidia/gpu-operator --create-namespace --wait
 fi
 
 
