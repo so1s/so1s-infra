@@ -130,6 +130,30 @@ variable "library_node_instance_types" {
   default     = ["t3.small"]
 }
 
+variable "model_builder_node_size_spec" {
+  description = "This type will use model_builder node that use eks"
+  type        = map(any)
+  default = {
+    min_size     = 1
+    max_size     = 1
+    desired_size = 1
+
+    disk_size = 100
+  }
+}
+
+variable "model_builder_node_spot" {
+  description = "This type will use model_builder node that use eks"
+  type        = bool
+  default     = true
+}
+
+variable "model_builder_node_instance_types" {
+  description = "This type will use model_builder node that use eks"
+  type        = list(string)
+  default     = ["r6a.large"]
+}
+
 variable "vpc_id" {
   description = "VPC ID to use EKS Cluster"
   type        = string

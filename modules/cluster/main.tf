@@ -3,7 +3,7 @@ locals {
   eks_nodegroup_default_iam_policies     = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
   eks_nodegroup_public_iam_policies      = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
   eks_nodegroup_application_iam_policies = ["arn:aws:iam::aws:policy/PowerUserAccess"]
-  node_names                             = ["inference", "application", "database", "public", "library"]
+  node_names                             = ["inference", "application", "database", "public", "library", "model_builder"]
   default_taint = {
     key    = "kind"
     effect = "NO_SCHEDULE"
@@ -351,6 +351,52 @@ module "eks" {
 
       labels = {
         kind = local.node_names[4]
+      }
+    }
+
+    model_builder = {
+      name         = "${var.global_name}-cluster-${local.node_names[5]}"
+      min_size     = var.model_builder_node_size_spec.min_size
+      max_size     = var.model_builder_node_size_spec.max_size
+      desired_size = var.model_builder_node_size_spec.desired_size
+
+      instance_types = var.model_builder_node_instance_types
+      ami_id         = "ami-07615daea13cb7a76"
+      ami_type       = "AL2_x86_64"
+      capacity_type  = var.model_builder_node_spot ? "SPOT" : "ON_DEMAND"
+
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
+
+      subnet_ids = var.vpc_private_subnets
+
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[5]}"
+      iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.model_builder_node_size_spec.disk_size
+            volume_type           = "gp3"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
+
+      taints = {
+        kind = local.taints[5]
+      }
+
+      labels = {
+        kind = local.node_names[5]
       }
     }
   }
