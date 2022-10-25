@@ -129,7 +129,7 @@ helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO
 echo -e "\n\n"
 echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
-if [ $SO1S_USE_GPU -eq 2 ]; then
+if [ $SO1S_USE_GPU -eq 2 ] || [ $SO1S_USE_GPU_IN_BUILDER -eq 2 ]; then
   echo -e "\n"
   echo "Start GPU Setting"
   echo "-> helm install "
