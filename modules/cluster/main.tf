@@ -9,9 +9,10 @@ locals {
     effect = "NO_SCHEDULE"
   }
   taints = [
-    for node_name in slice(local.node_names, 0, length(local.node_names)) : merge(local.default_taint, { value = node_name })
+    for node_name in local.node_names : merge(local.default_taint, { value = node_name })
   ]
-  uses_gpu = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
+  uses_gpu_in_inference     = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
+  uses_gpu_in_model_builder = length(regexall("xlarge", var.model_builder_node_instance_types[0])) > 0
 
   # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
   pre_bootstrap_user_data = <<-EOT
@@ -177,8 +178,8 @@ module "eks" {
       desired_size = var.inference_node_size_spec.desired_size
 
       instance_types = var.inference_node_instance_types
-      ami_type       = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
-      ami_id         = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
+      ami_type       = local.uses_gpu_in_inference ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id         = local.uses_gpu_in_inference ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -197,7 +198,7 @@ module "eks" {
         xvda = {
           device_name = "/dev/xvda"
           ebs = {
-            volume_size           = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
+            volume_size           = local.uses_gpu_in_inference ? 125 : var.inference_node_size_spec.disk_size
             volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
@@ -361,8 +362,8 @@ module "eks" {
       desired_size = var.model_builder_node_size_spec.desired_size
 
       instance_types = var.model_builder_node_instance_types
-      ami_id         = "ami-07615daea13cb7a76"
-      ami_type       = "AL2_x86_64"
+      ami_type       = local.uses_gpu_in_model_builder ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id         = local.uses_gpu_in_model_builder ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.model_builder_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -381,7 +382,7 @@ module "eks" {
         xvda = {
           device_name = "/dev/xvda"
           ebs = {
-            volume_size           = var.model_builder_node_size_spec.disk_size
+            volume_size           = local.uses_gpu_in_model_builder ? 125 : var.model_builder_node_size_spec.disk_size
             volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
