@@ -210,11 +210,6 @@ module "eks" {
 
       taints = {
         kind = local.taints[0]
-        custom_taint = {
-          key    = "gpu"
-          effect = "NO_SCHEDULE"
-          value  = local.uses_gpu_in_inference ? true : false
-        }
       }
 
       labels = {
@@ -399,11 +394,6 @@ module "eks" {
 
       taints = {
         kind = local.taints[5]
-        custom_taint = {
-          key    = "gpu"
-          effect = "NO_SCHEDULE"
-          value  = local.uses_gpu_in_model_builder ? true : false
-        }
       }
 
       labels = {
