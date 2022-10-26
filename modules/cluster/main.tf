@@ -3,7 +3,7 @@ locals {
   eks_nodegroup_default_iam_policies     = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
   eks_nodegroup_public_iam_policies      = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
   eks_nodegroup_application_iam_policies = ["arn:aws:iam::aws:policy/PowerUserAccess"]
-  node_names                             = ["inference", "application", "database", "public", "library", "model_builder"]
+  node_names                             = ["inference", "application", "database", "public", "library", "model-builder"]
   default_taint = {
     key    = "kind"
     effect = "NO_SCHEDULE"
