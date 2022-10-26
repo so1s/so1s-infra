@@ -3,15 +3,16 @@ locals {
   eks_nodegroup_default_iam_policies     = [data.terraform_remote_state.global.outputs.iam_policy_alb_arn]
   eks_nodegroup_public_iam_policies      = ["arn:aws:iam::aws:policy/AmazonRoute53FullAccess"]
   eks_nodegroup_application_iam_policies = ["arn:aws:iam::aws:policy/PowerUserAccess"]
-  node_names                             = ["inference", "application", "database", "public", "library"]
+  node_names                             = ["inference", "application", "database", "public", "library", "model-builder"]
   default_taint = {
     key    = "kind"
     effect = "NO_SCHEDULE"
   }
   taints = [
-    for node_name in slice(local.node_names, 0, length(local.node_names)) : merge(local.default_taint, { value = node_name })
+    for node_name in local.node_names : merge(local.default_taint, { value = node_name })
   ]
-  uses_gpu = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
+  uses_gpu_in_inference     = length(regexall("xlarge", var.inference_node_instance_types[0])) > 0
+  uses_gpu_in_model_builder = length(regexall("xlarge", var.model_builder_node_instance_types[0])) > 0
 
   # Original code from https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1770#issuecomment-1227047342
   pre_bootstrap_user_data = <<-EOT
@@ -177,8 +178,8 @@ module "eks" {
       desired_size = var.inference_node_size_spec.desired_size
 
       instance_types = var.inference_node_instance_types
-      ami_type       = local.uses_gpu ? "AL2_x86_64_GPU" : "AL2_x86_64"
-      ami_id         = local.uses_gpu ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
+      ami_type       = local.uses_gpu_in_inference ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id         = local.uses_gpu_in_inference ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
       capacity_type  = var.inference_node_spot ? "SPOT" : "ON_DEMAND"
 
       enable_bootstrap_user_data = true
@@ -197,7 +198,7 @@ module "eks" {
         xvda = {
           device_name = "/dev/xvda"
           ebs = {
-            volume_size           = local.uses_gpu ? 125 : var.inference_node_size_spec.disk_size
+            volume_size           = local.uses_gpu_in_inference ? 125 : var.inference_node_size_spec.disk_size
             volume_type           = "gp3"
             iops                  = 100
             throughput            = 125
@@ -351,6 +352,52 @@ module "eks" {
 
       labels = {
         kind = local.node_names[4]
+      }
+    }
+
+    model_builder = {
+      name         = "${var.global_name}-cluster-${local.node_names[5]}"
+      min_size     = var.model_builder_node_size_spec.min_size
+      max_size     = var.model_builder_node_size_spec.max_size
+      desired_size = var.model_builder_node_size_spec.desired_size
+
+      instance_types = var.model_builder_node_instance_types
+      ami_type       = local.uses_gpu_in_model_builder ? "AL2_x86_64_GPU" : "AL2_x86_64"
+      ami_id         = local.uses_gpu_in_model_builder ? "ami-0779aefb0ca1f55f3" : "ami-07615daea13cb7a76"
+      capacity_type  = var.model_builder_node_spot ? "SPOT" : "ON_DEMAND"
+
+      enable_bootstrap_user_data = true
+
+      pre_bootstrap_user_data  = local.pre_bootstrap_user_data
+      post_bootstrap_user_data = local.post_bootstrap_user_data
+
+      subnet_ids = var.vpc_private_subnets
+
+      create_iam_role              = true
+      iam_role_name                = "So1s-dataplane-${local.node_names[5]}"
+      iam_role_additional_policies = local.eks_nodegroup_default_iam_policies
+
+      ebs_optimized = true
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = local.uses_gpu_in_model_builder ? 125 : var.model_builder_node_size_spec.disk_size
+            volume_type           = "gp3"
+            iops                  = 100
+            throughput            = 125
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
+
+      taints = {
+        kind = local.taints[5]
+      }
+
+      labels = {
+        kind = local.node_names[5]
       }
     }
   }

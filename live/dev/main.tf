@@ -76,4 +76,14 @@ module "eks" {
     disk_size = 50
   }
   database_node_instance_types = ["t3.small"]
+
+  model_builder_node_spot = true
+  model_builder_node_size_spec = {
+    min_size     = 1
+    max_size     = 1
+    desired_size = 1
+
+    disk_size = 125
+  }
+  model_builder_node_instance_types = var.model_builder_node_instance_types
 }

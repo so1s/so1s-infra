@@ -34,7 +34,7 @@ fi
 SO1S_REGEX="^[1-2]$"
 while [[ ! $SO1S_USE_GPU =~ $SO1S_REGEX ]]
 do
-  echo -e "GPU를 사용할 것인지 번호를 입력해주세요. \n-> (1) 미사용 (2) 사용 "
+  echo -e "Inference Server에서 GPU를 사용할 것인지 번호를 입력해주세요. \n-> (1) 미사용 (2) 사용 "
   read SO1S_USE_GPU
 done
 
@@ -43,6 +43,19 @@ if [ $SO1S_USE_GPU -eq 2 ]; then
   INFERENCE_INSTANCE='["g4dn.xlarge"]'
 elif [ $SO1S_USE_GPU -eq 1 ]; then
   INFERENCE_INSTANCE='["t3a.large"]'
+fi
+
+while [[ ! $SO1S_USE_GPU_IN_BUILDER =~ $SO1S_REGEX ]]
+do
+  echo -e "Builder에서 GPU를 사용할 것인지 번호를 입력해주세요. \n-> (1) 미사용 (2) 사용 "
+  read SO1S_USE_GPU_IN_BUILDER
+done
+
+# 환경에 따른 글로벌 이름 설정 -> Prod은 고정 값
+if [ $SO1S_USE_GPU_IN_BUILDER -eq 2 ]; then
+  BUILDER_INSTANCE='["g4dn.xlarge"]'
+elif [ $SO1S_USE_GPU_IN_BUILDER -eq 1 ]; then
+  BUILDER_INSTANCE='["r6a.large"]'
 fi
 
 cd $SO1S_ENV_PATH
@@ -65,7 +78,7 @@ fi
 echo -e "\n"
 echo "Start Resource Provisioning"
 echo "-> terraform apply -var=global_name=$SO1S_GLOBAL_NAME"
-terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var="inference_node_instance_types=$INFERENCE_INSTANCE"
+terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var="inference_node_instance_types=$INFERENCE_INSTANCE" -var="model_builder_node_instance_types=$BUILDER_INSTANCE"
 
 # Using for ALB, External DNS Chart
 RESULT=`terraform output`
@@ -116,7 +129,7 @@ helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO
 echo -e "\n\n"
 echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
-if [ $SO1S_USE_GPU -eq 2 ]; then
+if [ $SO1S_USE_GPU -eq 2 ] || [ $SO1S_USE_GPU_IN_BUILDER -eq 2 ]; then
   echo -e "\n"
   echo "Start GPU Setting"
   echo "-> helm install "
