@@ -55,7 +55,7 @@ done
 if [ $SO1S_USE_GPU_IN_BUILDER -eq 2 ]; then
   BUILDER_INSTANCE='["g4dn.xlarge"]'
 elif [ $SO1S_USE_GPU_IN_BUILDER -eq 1 ]; then
-  BUILDER_INSTANCE='["r6a.large"]'
+  BUILDER_INSTANCE='["r5a.large"]'
 fi
 
 cd $SO1S_ENV_PATH
