@@ -9,3 +9,9 @@ variable "inference_node_instance_types" {
   type        = list(string)
   default     = ["t3a.large"]
 }
+
+variable "model_builder_node_instance_types" {
+  description = "This type will use inference node that use eks"
+  type        = list(string)
+  default     = ["r6a.large"]
+}
