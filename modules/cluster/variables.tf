@@ -151,7 +151,7 @@ variable "model_builder_node_spot" {
 variable "model_builder_node_instance_types" {
   description = "This type will use model_builder node that use eks"
   type        = list(string)
-  default     = ["r6a.large"]
+  default     = ["r5a.large"]
 }
 
 variable "vpc_id" {
