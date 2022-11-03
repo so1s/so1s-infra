@@ -131,7 +131,12 @@ http://test-www.so1s.io:9443
 
 # 클러스터 삭제
 ./clean-up.sh
+```
 
+### Kiali 토큰 확인
+
+```bash
+kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-headers -o custom-columns=":metadata.name" | grep kiali-token) -o jsonpath={.data.token} | base64 -d
 ```
 
 
