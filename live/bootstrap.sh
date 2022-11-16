@@ -108,8 +108,8 @@ if [ $SO1S_ENV_NUMBER -eq 1 ]; then
   echo -e "\n"
   echo "Install ALB"
   
-  echo "-> helm repo add aws https://aws.github.io"
-  helm repo add aws https://aws.github.io
+  echo "-> helm repo add aws https://aws.github.io/eks-charts"
+  helm repo add aws https://aws.github.io/eks-charts
 
   echo "-> helm install alb -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/aws-load-balancer-controller/dev-values.yaml eks/aws-load-balancer-controller --create-namespace --wait --set clusterName=$CLUSTER_NAME --set vpcId=$VPC_ID"
   helm install alb -n kube-system -f $SO1S_DEPLOY_REPO_PATH/charts/public/aws-load-balancer-controller/dev-values.yaml aws/aws-load-balancer-controller --create-namespace --wait --set clusterName=$CLUSTER_NAME --set vpcId=$VPC_ID
