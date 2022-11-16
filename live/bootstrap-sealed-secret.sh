@@ -21,5 +21,5 @@ kubectl rollout restart deployment -n frontend frontend
 
 echo "Rollout Istio Deployment"
 kubectl config set-context --current --namespace=argocd
-argocd app sync so1s-istio-app-prod --core --prune --replace --force
+argocd app sync so1s-istio-app-prod --core --prune --replace --force > /dev/null
 kubectl config set-context --current --namespace=default
