@@ -92,5 +92,4 @@ module "iam" {
 
   cluster_oidc_provider_arn = module.eks.cluster_oidc_provider_arn
   cluster_oidc_issuer_url   = module.eks.cluster_oidc_issuer_url
-  cluster_oidc_provider     = module.eks.cluster_oidc_provider
 }
