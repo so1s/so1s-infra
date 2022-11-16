@@ -1,5 +1,5 @@
 locals {
-  iam = replace(split(":cluster", var.cluster_oidc_provider_arn)[0], "aws:eks", "aws:iam")
+  iam = replace(split(":cluster", var.cluster_oidc_provider_arn)[0], "/aws:eks:[\\s\\S\\d].*:/", "aws:iam::")
 }
 
 resource "aws_iam_role" "external_dns" {
