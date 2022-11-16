@@ -18,3 +18,8 @@ sleep 10
 DEPLOYMENT_NAME=`kubectl get deployment -n backend | grep so1s | cut -d ' ' -f1`
 kubectl rollout restart deployment -n backend $DEPLOYMENT_NAME 
 kubectl rollout restart deployment -n frontend frontend
+
+echo "Rollout Istio Deployment"
+kubectl config set-context --current --namespace=argocd
+argocd app sync so1s-istio-app-prod --core --prune --replace --force
+kubectl config set-context --current --namespace=default
