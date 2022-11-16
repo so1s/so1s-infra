@@ -4,11 +4,20 @@
         {
             "Effect": "Allow",
             "Principal": {
+                "AWS": "${IAM}:root"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {}
+        },
+        {
+            "Effect": "Allow",
+            "Principal": {
                 "Federated": "${OIDC_ARN}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringEquals": {
+                    "${OIDC_URL}:sub": "system:serviceaccount:kube-system:external-dns",
                     "${OIDC_URL}:aud": "sts.amazonaws.com"
                 }
             }
