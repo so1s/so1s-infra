@@ -1,6 +1,10 @@
+locals {
+  iam = replace(split(":cluster", var.cluster_oidc_provider_arn)[0], "aws:eks", "aws:iam")
+}
+
 resource "aws_iam_role" "external_dns" {
   name               = "external_dns"
-  assume_role_policy = templatefile("${path.module}/oidc-policy.json", { OIDC_ARN = var.cluster_oidc_provider_arn, OIDC_URL = replace(var.cluster_oidc_issuer_url, "https://", ""), IAM = split(var.cluster_oidc_provider_arn, ":oidc-provider")[0] })
+  assume_role_policy = templatefile("${path.module}/oidc-policy.json", { OIDC_URL = replace(var.cluster_oidc_issuer_url, "https://", ""), IAM = local.iam })
   depends_on         = [var.cluster_oidc_issuer_url, var.cluster_oidc_provider_arn]
 }
 

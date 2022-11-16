@@ -4,15 +4,7 @@
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "${IAM}:root"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {}
-        },
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Federated": "${OIDC_ARN}"
+                "Federated": "${IAM}:oidc-provider/${OIDC_URL}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
