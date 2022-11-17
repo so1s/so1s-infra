@@ -5,6 +5,7 @@ locals {
 resource "aws_iam_role" "external_dns" {
   name               = "external_dns"
   assume_role_policy = templatefile("${path.module}/oidc-policy.json", { OIDC_URL = replace(var.cluster_oidc_issuer_url, "https://", ""), IAM = local.iam })
+  managed_policy_arns = [data.terraform_remote_state.global.outputs.iam_policy_external_dns_arn]
   depends_on         = [var.cluster_oidc_issuer_url, var.cluster_oidc_provider_arn]
 }
 
