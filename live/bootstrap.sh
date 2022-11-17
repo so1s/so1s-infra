@@ -84,9 +84,9 @@ terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var="inference_node_instan
 RESULT=`terraform output`
 CLUSTER_NAME=`echo -e $RESULT | grep cluster_id | cut -d '"' -f2`
 echo $CLUSTER_NAME
-ROLE_ARN=`echo -e $RESULT | grep external_dns_role_arn | cut -d '"' -f4`
+ROLE_ARN=`echo -e $RESULT | grep external_dns_role_arn | cut -d '"' -f2`
 echo $ROLE_ARN
-VPC_ID=`echo -e $RESULT | grep vpc_id | cut -d '"' -f6`
+VPC_ID=`echo -e $RESULT | grep vpc_id | cut -d '"' -f2`
 echo $VPC_ID
 
 [[ $SO1S_ENV_NUMBER = 1 ]] && SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s" || SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s-dev"
