@@ -103,9 +103,12 @@ if [ helm != 0 ]; then
   echo "Your Helm Version -> " `helm version --short | head -n 1`
 fi
 
+<<<<<<< HEAD
 helm repo add aws https://aws.github.io/eks-charts
 helm install aws-vpc-cni -n kube-system aws/aws-vpc-cni --version 1.1.17
 
+=======
+>>>>>>> parent of f6939c8 (fix: install cni using helm)
 if [ $SO1S_ENV_NUMBER -eq 1 ]; then
   # install alb chart
   echo -e "\n"

@@ -66,6 +66,10 @@ module "eks" {
       addon_version     = "v1.22.6-eksbuild.1"
       resolve_conflicts = "OVERWRITE"
     }
+    vpc-cni = {
+      addon_version     = "v1.11.2-eksbuild.1"
+      resolve_conflicts = "OVERWRITE"
+    }
   }
 
   vpc_id     = var.vpc_id
