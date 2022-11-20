@@ -82,11 +82,11 @@ terraform apply -var="global_name=$SO1S_GLOBAL_NAME" -var="inference_node_instan
 
 # Using for ALB, External DNS Chart
 RESULT=`terraform output`
-CLUSTER_NAME=`echo -e $RESULT | grep cluster_id | cut -d '"' -f2`
+CLUSTER_NAME=`echo -e $RESULT | cut -d '"' -f2`
 echo $CLUSTER_NAME
-ROLE_ARN=`echo -e $RESULT | grep external_dns_role_arn | cut -d '"' -f2`
+ROLE_ARN=`echo -e $RESULT | cut -d '"' -f4`
 echo $ROLE_ARN
-VPC_ID=`echo -e $RESULT | grep vpc_id | cut -d '"' -f2`
+VPC_ID=`echo -e $RESULT | cut -d '"' -f6`
 echo $VPC_ID
 
 [[ $SO1S_ENV_NUMBER = 1 ]] && SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s" || SO1S_CLUSTER_NAME="$SO1S_GLOBAL_NAME-so1s-dev"
@@ -103,12 +103,6 @@ if [ helm != 0 ]; then
   echo "Your Helm Version -> " `helm version --short | head -n 1`
 fi
 
-<<<<<<< HEAD
-helm repo add aws https://aws.github.io/eks-charts
-helm install aws-vpc-cni -n kube-system aws/aws-vpc-cni --version 1.1.17
-
-=======
->>>>>>> parent of f6939c8 (fix: install cni using helm)
 if [ $SO1S_ENV_NUMBER -eq 1 ]; then
   # install alb chart
   echo -e "\n"
