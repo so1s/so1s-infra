@@ -58,13 +58,13 @@ module "eks" {
 
   library_node_spot = true
   library_node_size_spec = {
-    min_size     = 2
+    min_size     = 3
     max_size     = 3
-    desired_size = 2
+    desired_size = 3
 
     disk_size = 30
   }
-  library_node_instance_types = ["t3a.medium"]
+  library_node_instance_types = ["t3a.large"]
 
   database_node_spot = false
   database_node_size_spec = {
