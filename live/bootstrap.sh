@@ -128,7 +128,10 @@ echo `helm repo add argo https://argoproj.github.io/argo-helm`
 helm install argocd -n argocd -f $SO1S_DEPLOY_REPO_PATH/charts/argocd/argocd-$SO1S_ENV_NAME-values.yaml argo/argo-cd --create-namespace --wait
 
 echo -e "\n\n"
-echo "ArgoCD Password -> " `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
+ARGO_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo)
+echo "ArgoCD Password ->" $ARGO_PASSWORD
+rm -f ./argocd-password
+echo $ARGO_PASSWORD > ./argocd-password
 
 if [ $SO1S_USE_GPU -eq 2 ] || [ $SO1S_USE_GPU_IN_BUILDER -eq 2 ]; then
   echo -e "\n"
