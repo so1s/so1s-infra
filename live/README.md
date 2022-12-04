@@ -138,6 +138,3 @@ http://test-www.so1s.io:9443
 ```bash
 kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-headers -o custom-columns=":metadata.name" | grep kiali-token) -o jsonpath={.data.token} | base64 -d
 ```
-
-
-각종 이슈 신고는 지라로 받겠습니다.
