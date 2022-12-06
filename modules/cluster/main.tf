@@ -37,9 +37,6 @@ locals {
   #!/bin/bash
   set -x
 
-  touch ~/.ssh/authorized_keys
-  echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgJ7r7jZxiV2HXVsNbdrSqsnqOKn7L2Uv8IqavZI6hWaUMNzBSOWhGrI248teWkRCaXE8eOHH5prOuFduXM3OcBrB3Uytq1ES2IAgm1heWRYQX91iOrFU+5/d9Kk6VAQ4Ld1g9rL6Cmw9pBDa7uU/naKRwPhyU5GP2mbaTz2EyzewJui3v7dlDBGO0eGXYHtW6V7cGo9UoLJp4WNVdV2gK+MvT32FYpsFVF3Z1nvnKYkybKElrnwXCyOsZBOeMuFVD2esJe4uzoyH2V6UCUmHZmwN6ERVx6S2e8t4I5ciW4UWsyU4N+DlCrUlUPV0FCtPH/EKtl8w+9jsvmE+uySCz" \
-    >> ~/.ssh/authorized_keys
   EOT
 }
 
