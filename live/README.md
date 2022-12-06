@@ -6,7 +6,7 @@
 2. Terraform
 3. kubeseal
 4. helm
-6. AWS cli 인증
+6. 인증 완료된 AWS CLI
 
 ```bash
 # ~/.bashrc | ~/.zshrc
