@@ -1,31 +1,17 @@
-## So1s 개발 환경 사용법 - v2.1.0
+## Terraform을 통한 클러스터 구성 가이드
 
-bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
+### Requirements
 
-다음과 같은 사전 설치 조건이 필요합니다.
-
-1. kubernetes 1.22+
-2. Terraform 4.28.0
-3. KubeSeal 0.18.1
-4. helm 3.8.2
-5. helm repo argo (argo-cd 5.4.1)
+1. kubernetes 1.22
+2. Terraform
+3. kubeseal
+4. helm
 6. AWS cli 인증
 
 ```bash
+# ~/.bashrc | ~/.zshrc
 export AWS_ACCESS_KEY_ID=${ID}
 export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
-```
-
-### 공통 설정
-
-```bash
-
-# 사전 환경 작업
-chmod +x ./bootstrap.sh
-chmod +x ./bootstrap-sealed-secret.sh
-chmod +x ./bootstrap-with-notification.sh
-chmod +x ./clean-up.sh
-
 ```
 
 ### Dev 환경 실행
