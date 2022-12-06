@@ -9,13 +9,12 @@ bootstrap.sh을 통해 쉽게 개발 환경 구축이 가능합니다.
 3. KubeSeal 0.18.1
 4. helm 3.8.2
 5. helm repo argo (argo-cd 5.4.1)
-6. aws cli 혹은 aws 시크릿 키를 export하기 -> export AWS_ACCESS_KEY_ID="anaccesskey", export AWS_SECRET_ACCESS_KEY="asecretkey"
+6. AWS cli 인증
 
-하나라도 설치가 안되어 있을 시 쉘 스크립트가 정상동작을 안하니 유의해주시길 바랍니다.
-
-### 이전 버전과 달라진 점
-
-EKS 노드 그룹을 추가 분리함에 따라 so1s v0.4.0과 호환이 안됩니다. 따라서 이전 infra v1.1.0을 기준으로 작업을 해주셔야합니다.
+```bash
+export AWS_ACCESS_KEY_ID=${ID}
+export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
+```
 
 ### 공통 설정
 
@@ -35,8 +34,6 @@ chmod +x ./clean-up.sh
 # =====================
 # Terraform 프로비저닝
 ./bootstrap.sh
-# 혹은 Slack Webhook를 같이 사용하면서 프로비저닝
-./bootstrap-with-notification.sh
 
 # ArgoCD UI 포트포워딩
 kubectl port-forward service/argocd-server -n argocd 8080:443
