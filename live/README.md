@@ -1,4 +1,4 @@
-## Terraform을 통한 클러스터 구성 가이드
+## Terraform을 통한 EKS 클러스터 구성 매뉴얼
 
 ### Requirements
 
@@ -14,7 +14,7 @@ export AWS_ACCESS_KEY_ID=${ID}
 export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
 ```
 
-### Dev 환경 실행
+### Development 클러스터 프로비저닝
 
 ```bash
 # =====================
@@ -24,7 +24,7 @@ export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
 # ArgoCD UI 포트포워딩
 kubectl port-forward service/argocd-server -n argocd 8080:443
 
-# ArgoCD Sealed-Secret 어플리케이션이 정상적으로 동작한 다음 실행
+# Sealed-Secret 인증서 주입
 ./bootstrap-sealed-secret.sh
 
 # Istio Gateway 포트포워딩
@@ -68,26 +68,7 @@ sudo brew services start dnsmasq
 
 # 1 - dig 사용
 
-# dig test-www.so1s.io
-# 
-# ; <<>> DiG 9.18.1-1ubuntu1.1-Ubuntu <<>> test-www.so1s.io
-# ;; global options: +cmd
-# ;; Got answer:
-# ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 21457
-# ;; flags: qr aa rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-# ;; OPT PSEUDOSECTION:
-# ; EDNS: version: 0, flags:; udp: 65494
-# ;; QUESTION SECTION:
-# ;test-www.so1s.io.              IN      A
-
-# ;; ANSWER SECTION:
-# test-www.so1s.io.       0       IN      A       127.0.0.1
-
-# ;; Query time: 0 msec
-# ;; SERVER: 127.0.0.53#53(127.0.0.53) (UDP)
-# ;; WHEN: Wed Sep 07 20:32:27 KST 2022
-# ;; MSG SIZE  rcvd: 61
+dig test-www.so1s.io
 
 # 2 - 브라우저 사용
 
@@ -102,14 +83,14 @@ http://test-www.so1s.io:9443
 ```
 
 
-### Prod 환경 실행
+### Production 클러스터 프로비저닝
 
 ```bash
 
 # Terraform 프로비저닝
 ./bootstrap.sh
 
-# ArgoCD Sealed-Secret 어플리케이션이 정상적으로 동작한 다음 실행
+# Sealed-Secret 인증서 주입
 ./bootstrap-sealed-secret.sh
 
 # 클러스터 삭제
