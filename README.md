@@ -12,7 +12,9 @@ Terraform 기반 EKS 클러스터 프로비저닝 스크립트
 
 ## 사용 방법
 
-[매뉴얼 보러가기](./live/README.md)
+[프로비저닝 매뉴얼 보러가기](./live/README.md)
+
+이 Repository는 Public Template으로 제공됩니다. 보일러플레이트로 사용하시려면 상단의 `Use This Template` 버튼을 눌러주세요!
 
 ## 주요 기능
 
