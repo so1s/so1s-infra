@@ -27,10 +27,9 @@ Terraform 기반 EKS 클러스터 프로비저닝 스크립트
 ## 사용 기술
 
 - HCL / Terraform
-- AWS
-  - EKS
-  - EC2
-  - VPC
-  - IAM
-  - ELB
-  - S3
+- AWS EKS
+- AWS EC2
+- AWS VPC
+- AWS IAM
+- AWS ELB
+- AWS S3
