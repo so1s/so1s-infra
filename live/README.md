@@ -2,7 +2,7 @@
 
 ### Requirements
 
-1. kubernetes 1.22
+1. kubernetes 1.22+
 2. Terraform
 3. kubeseal
 4. helm
