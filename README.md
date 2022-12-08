@@ -12,7 +12,7 @@ Terraform 기반 EKS 클러스터 프로비저닝 스크립트
 
 ## 사용 방법
 
-[매뉴얼 보러가기](https://github.com/so1s/so1s-infra/blob/main/live/README.md)
+[매뉴얼 보러가기](./live/README.md)
 
 ## 사용 기술
 
