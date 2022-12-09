@@ -108,3 +108,13 @@ http://test-www.so1s.io:9443
 ```bash
 kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-headers -o custom-columns=":metadata.name" | grep kiali-token) -o jsonpath={.data.token} | base64 -d
 ```
+
+### Sealed Secrets 인증서 보관 / 재사용
+
+```bash
+kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl get secret -n sealed-secrets -o yaml > ./cert.yaml
+```
+
+추출된 cert.yaml을 로컬 Deploy 폴더 루트 경로에 보관해 주세요.
+
+이 인증서를 기반으로 [Deploy Sealed Secrets](https://github.com/so1s/so1s-deploy) 암호화가 가능합니다.
