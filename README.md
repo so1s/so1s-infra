@@ -4,7 +4,7 @@
 
 # So1s Infrastructure as Code
 
-Terraform 기반 EKS 클러스터 프로비저닝 스크립트
+Terraform 기반 EKS 클러스터 구성
 
 [프로젝트 소개 페이지로 돌아가기](https://github.com/so1s)
 
