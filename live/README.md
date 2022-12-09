@@ -4,8 +4,7 @@
 
 1. kubernetes 1.22+
 2. Terraform
-3. kubeseal
-4. helm
+4. Helm
 6. AWS CLI version 2
 
 ### 환경 변수 설정
