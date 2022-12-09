@@ -6,7 +6,7 @@
 2. Terraform
 3. kubeseal
 4. helm
-6. AWS CLI v2
+6. AWS CLI version 2
 
 ### 환경 변수 설정
 
