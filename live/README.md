@@ -6,7 +6,9 @@
 2. Terraform
 3. kubeseal
 4. helm
-6. 인증 완료된 AWS CLI
+6. AWS CLI v2
+
+### 환경 변수 설정
 
 ```bash
 # ~/.bashrc | ~/.zshrc
