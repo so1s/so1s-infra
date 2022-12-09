@@ -2,10 +2,10 @@
 
 ### Requirements
 
-1. kubernetes 1.22+
-2. Terraform
-4. Helm
-6. AWS CLI version 2
+1. Kubernetes 1.22+
+2. Helm
+3. Terraform
+4. AWS CLI version 2
 
 ### 환경 변수 설정
 
