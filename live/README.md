@@ -14,7 +14,7 @@ export AWS_ACCESS_KEY_ID=${ID}
 export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
 
 # 1 - prod | 2 - env
-SO1S_ENV_NUMBER=1 | 2
+SO1S_ENV_NUMBER=${"1" | "2"}
 # ex) ~/programming/so1s/so1s-deploy
 SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
 ```
