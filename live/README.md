@@ -111,7 +111,7 @@ kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-hea
 
 ### Sealed Secrets 인증서 보관 / 재사용
 
-여러번의 클러스터 프로비저닝을 하며, 같은 인증서로 암호화된 Sealed Secrets를 쓰기 위해서는 현재 클러스터의 인증서를 로컬에 보관해야 합니다.
+여러번의 클러스터 프로비저닝을 하며, 같은 인증서로 암호화된 Sealed Secrets를 복호화하기 위해서는 현재 클러스터의 인증서를 로컬에 보관해야 합니다.
 
 ```bash
 kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl get secret -n sealed-secrets -o yaml > ./cert.yaml
@@ -121,7 +121,7 @@ kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl
 
 이 인증서를 기반으로 [Deploy Sealed Secrets](https://github.com/so1s/so1s-deploy#secrets-env-%ED%8C%8C%EC%9D%BC-%EC%9E%91%EC%84%B1) 암호화가 가능합니다.
 
-다른 클러스터에 Sealed Secrets 인증서를 주입하려면 사용 중인 kubectl context를 주입할 클러스터로 변경한 뒤 명령어를 입력해 주세요.
+다른 클러스터에 Sealed Secrets 인증서를 주입하려면 사용 중인 kubectl context를 주입할 클러스터로 변경한 뒤 다음 명령어를 입력해 주세요.
 
 ```bash
 ./bootstrap-sealed-secret.sh
