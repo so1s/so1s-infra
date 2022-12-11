@@ -20,6 +20,20 @@ SO1S_ENV_NUMBER=${"1" | "2"}
 SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
 ```
 
+### Production 클러스터 프로비저닝
+
+```bash
+
+# Terraform 프로비저닝
+./bootstrap.sh
+
+# Sealed-Secret 인증서 주입
+./bootstrap-sealed-secrets.sh
+
+# 클러스터 삭제
+./clean-up.sh
+```
+
 ### Development 클러스터 프로비저닝
 
 ```bash
@@ -86,21 +100,6 @@ http://test-www.so1s.io:9443
 # 클러스터 삭제
 ./clean-up.sh
 
-```
-
-
-### Production 클러스터 프로비저닝
-
-```bash
-
-# Terraform 프로비저닝
-./bootstrap.sh
-
-# Sealed-Secret 인증서 주입
-./bootstrap-sealed-secret.sh
-
-# 클러스터 삭제
-./clean-up.sh
 ```
 
 ### Kiali 토큰 확인
