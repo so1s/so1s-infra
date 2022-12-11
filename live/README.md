@@ -130,5 +130,5 @@ kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl
 ### Argo CD 어드민 비밀번호 가져오기
 
 ```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d ; echo
+cat ../argocd-password
 ```
