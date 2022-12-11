@@ -130,5 +130,17 @@ kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl
 ### Argo CD 어드민 비밀번호 가져오기
 
 ```bash
-cat ../argocd-password
+cat argocd-password
+```
+
+### Istio App CA Cert 관련 문제 해결
+
+의존성으로 Nix 패키지 관리자가 필요합니다.
+
+```bash
+./install-nix.sh
+```
+
+```bash
+./fix-istio-ca-cert.sh
 ```
