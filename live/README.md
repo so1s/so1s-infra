@@ -131,15 +131,3 @@ kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl
 ```bash
 cat argocd-password
 ```
-
-### Istio App CA Cert 관련 문제 해결
-
-의존성으로 Nix 패키지 관리자가 필요합니다.
-
-```bash
-./install-nix.sh
-```
-
-```bash
-./fix-istio-ca-cert.sh
-```
