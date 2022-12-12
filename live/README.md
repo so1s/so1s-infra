@@ -102,11 +102,6 @@ http://test-www.so1s.io:9443
 
 ```
 
-### Kiali 토큰 확인
-
-```bash
-kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-headers -o custom-columns=":metadata.name" | grep kiali-token) -o jsonpath={.data.token} | base64 -d
-```
 
 ### Sealed Secrets 인증서 보관 / 재사용
 
@@ -116,18 +111,16 @@ kubectl get secret -n istio-system $(kubectl get secret -n istio-system --no-hea
 kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl get secret -n sealed-secrets -o yaml > ./cert.yaml
 ```
 
-추출된 cert.yaml을 로컬 Deploy 폴더 루트 경로에 보관해 주세요.
+추출된 cert.yaml을 로컬 Deploy 루트 폴더에 보관해 주세요.
 
 이 인증서를 기반으로 [Deploy Sealed Secrets](https://github.com/so1s/so1s-deploy#secrets-env-%ED%8C%8C%EC%9D%BC-%EC%9E%91%EC%84%B1) 암호화가 가능합니다.
 
-다른 클러스터에 Sealed Secrets 인증서를 주입하려면 사용 중인 kubectl context를 주입할 클러스터로 변경한 뒤 다음 명령어를 입력해 주세요.
+다른 클러스터에 Sealed Secrets 인증서를 주입하려면 사용 중인 kubectl context를 주입할 클러스터로 변경한 뒤 로컬 Deploy 루트 폴더에서 다음 명령어를 입력해 주세요.
 
 ```bash
 ./bootstrap-sealed-secret.sh
 ```
 
-### Argo CD 어드민 비밀번호 가져오기
+### Deploy 매뉴얼
 
-```bash
-cat argocd-password
-```
+추후 과정의 매뉴얼은 [Deploy 매뉴얼](https://github.com/so1s/so1s-deploy)을 참고해 주세요!
