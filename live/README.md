@@ -15,9 +15,9 @@ export AWS_ACCESS_KEY_ID=${ID}
 export AWS_SECRET_ACCESS_KEY=${SECRET_KEY}
 
 # 1 - prod | 2 - env
-SO1S_ENV_NUMBER=${"1" | "2"}
+export SO1S_ENV_NUMBER=${"1" | "2"}
 # ex) ~/programming/so1s/so1s-deploy
-SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
+export SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
 ```
 
 ### Production 클러스터 프로비저닝
@@ -26,9 +26,6 @@ SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
 
 # Terraform 프로비저닝
 ./bootstrap.sh
-
-# Sealed-Secret 인증서 주입
-./bootstrap-sealed-secrets.sh
 
 # 클러스터 삭제
 ./clean-up.sh
@@ -43,9 +40,6 @@ SO1S_DEPLOY_REPO_PATH=${ABSOLUTE_DEPLOY_REPO_PATH}
 
 # ArgoCD UI 포트포워딩
 kubectl port-forward service/argocd-server -n argocd 8080:443
-
-# Sealed-Secret 인증서 주입
-./bootstrap-sealed-secret.sh
 
 # Istio Gateway 포트포워딩
 kubectl port-forward -n istio-system svc/istio 9443:80
@@ -99,26 +93,6 @@ http://test-www.so1s.io:9443
 
 # 클러스터 삭제
 ./clean-up.sh
-
-```
-
-
-### Sealed Secrets 인증서 보관 / 재사용
-
-여러번의 클러스터 프로비저닝을 하며, 같은 인증서로 암호화된 Sealed Secrets를 복호화하기 위해서는 현재 클러스터의 인증서를 로컬에 보관해야 합니다.
-
-```bash
-kubectl get secret -n sealed-secrets -o name | grep sealed-secrets-key | kubectl get secret -n sealed-secrets -o yaml > ./cert.yaml
-```
-
-추출된 cert.yaml을 로컬 Deploy 루트 폴더에 보관해 주세요.
-
-이 인증서를 기반으로 [Deploy Sealed Secrets](https://github.com/so1s/so1s-deploy#secrets-env-%ED%8C%8C%EC%9D%BC-%EC%9E%91%EC%84%B1) 암호화가 가능합니다.
-
-다른 클러스터에 Sealed Secrets 인증서를 주입하려면 사용 중인 kubectl context를 주입할 클러스터로 변경한 뒤 로컬 Deploy 루트 폴더에서 다음 명령어를 입력해 주세요.
-
-```bash
-./bootstrap-sealed-secret.sh
 ```
 
 ### Deploy 매뉴얼
